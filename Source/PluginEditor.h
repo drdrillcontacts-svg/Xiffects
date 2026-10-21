@@ -1,17 +1,27 @@
 #pragma once
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
+#include "UI/Controls.h"
 
 class XiffectsAudioProcessorEditor final : public juce::AudioProcessorEditor, private juce::Timer
 {
 public:
     explicit XiffectsAudioProcessorEditor (XiffectsAudioProcessor&);
-    ~XiffectsAudioProcessorEditor() override = default;
+    ~XiffectsAudioProcessorEditor() override;
     void paint (juce::Graphics&) override;
     void resized() override;
 
 private:
-    void timerCallback() override { repaint(); }
+    void timerCallback() override;
+    void choosePresetFile(bool save);
+    void showSettings();
+    xiffects::LookAndFeel lookAndFeel;
+    std::unique_ptr<juce::FileChooser> fileChooser;
+    juce::TooltipWindow tooltips {this,700};
+    juce::TextButton saveButton {"SAVE"}, loadButton {"LOAD"}, settingsButton {"..."};
+    std::array<xiffects::TelemetryFrame,240> history{};
+    size_t historyPosition=0;
+    float displayInput=0,displayOutput=0;
     juce::Image hero;
     juce::Slider outputSlider;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> outputAttachment;
@@ -37,7 +47,7 @@ private:
     juce::Label brand, byline, saxLabel, tuneTitle, keyLabel, scaleLabel, strengthLabel, speedLabel;
     juce::Slider tuneStrength, tuneSpeed;
     std::unique_ptr<Attachment> strengthAttachment, speedAttachment;
-    std::array<juce::ToggleButton, 12> noteButtons;
+    std::array<xiffects::NoteKey, 12> noteButtons;
     std::array<std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment>, 12> noteAttachments;
     juce::TextButton powerButton { "⏻" };
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> powerAttachment;
