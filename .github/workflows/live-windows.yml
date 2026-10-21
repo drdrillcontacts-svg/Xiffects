@@ -1,0 +1,99 @@
+name: Live Windows Validation
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/live-windows.yml'
+      - 'Source/DSP/LivePitchBank.h'
+      - 'Tests/LiveHostTests.cpp'
+permissions:
+  contents: read
+jobs:
+  reference:
+    runs-on: windows-latest
+    timeout-minutes: 35
+    steps:
+      - name: Preserve exact Reference bytes on checkout
+        run: git config --global core.autocrlf false
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify bounded Live changes
+        shell: python
+        run: |
+          import pathlib,json,hashlib,subprocess
+          data=json.loads(pathlib.Path('docs/live/production-hashes.json').read_text())
+          files=data['changed_files']
+          for name,digest in files.items():
+              assert hashlib.sha256(pathlib.Path(name).read_bytes()).hexdigest()==digest,name
+          assert sorted(subprocess.check_output(['git','diff','--name-only',data['base'],'--','Source','Assets'],text=True).splitlines())==sorted(files)
+          pathlib.Path('evidence').mkdir()
+          pathlib.Path('evidence/environment.txt').write_text(subprocess.check_output(['systeminfo'],text=True))
+      - name: Configure x64 Release
+        run: |
+          cmake -S . -B build-reference-win -A x64 -DXIFFECTS_BUILD_LIVE=ON 2>&1 | Tee-Object evidence/configure.txt
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Build product and harness
+        run: |
+          cmake --build build-reference-win --config Release --parallel 2 --target XiffectsLive_VST3 XiffectsLive_Standalone XiffectsLiveHostTests XiffectsLiveRender XiffectsDSPTests XiffectsPitchTests XiffectsOnsetTests XiffectsLivePitchTests XiffectsCorrectionRegressionTests XiffectsRealtimeTests 2>&1 | Tee-Object evidence/build.txt
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Execute all CTests
+        id: tests
+        continue-on-error: true
+        run: |
+          ctest --test-dir build-reference-win -C Release -R "^(DSP|Pitch|Onset|LivePitch|CorrectionRegression|Realtime|LiveHost)$" -V --output-junit "$pwd/evidence/ctest.xml" 2>&1 | Tee-Object evidence/ctest.txt
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Fixtures and actual product rendering
+        id: renders
+        continue-on-error: true
+        run: |
+          python -m pip install numpy==2.2.6
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python Tools/GenerateReferenceFixtures.py build-reference-fixtures
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python Tests/FixtureTests.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python Tools/ValidateReferenceWindows.py --renderer build-reference-win/Release/XiffectsLiveRender.exe --fixtures build-reference-fixtures --output evidence/renders --require-onset-a4 --require-live-latency
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Load real VST3 in pluginval validation host
+        id: pluginval
+        continue-on-error: true
+        run: |
+          Invoke-WebRequest https://github.com/Tracktion/pluginval/releases/download/v1.0.4/pluginval_Windows.zip -OutFile build-reference-pluginval.zip
+          Get-FileHash build-reference-pluginval.zip | Out-File evidence/pluginval-sha256.txt
+          Expand-Archive build-reference-pluginval.zip build-reference-pluginval
+          $exe = (Get-ChildItem build-reference-pluginval -Recurse -Filter pluginval.exe | Select-Object -First 1).FullName
+          & $exe --strictness-level 5 --validate "$pwd/build-reference-win/XiffectsLive_artefacts/Release/VST3/Xiffects Live.vst3" 2>&1 | Tee-Object evidence/pluginval.txt
+          $result = $LASTEXITCODE
+          Write-Output "::notice title=PluginvalExit::$result"
+          exit $result
+      - name: Publish measured Live impulse results
+        if: always()
+        run: |
+          if (Test-Path evidence/ctest.txt) {
+            $text = ((Get-Content evidence/ctest.txt | Select-String 'LIVE rate=') -join "`n").Replace('%','%25').Replace("`r",'%0D').Replace("`n",'%0A')
+            Write-Output "::notice title=LiveMeasuredLatency::$text"
+          }
+      - name: Publish status evidence
+        if: always()
+        run: |
+          Write-Output '::notice title=ValidationStatus::ctest=${{ steps.tests.outcome }};renders=${{ steps.renders.outcome }};pluginval=${{ steps.pluginval.outcome }};REAPER=NOT_RUN;hardware=NOT_MEASURED'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Xiffects-Live-Windows-Experimental
+          path: |
+            evidence/
+            build-reference-win/XiffectsLive_artefacts/Release/VST3/
+            build-reference-win/XiffectsLive_artefacts/Release/Standalone/
+            build-reference-win/CMakeCache.txt
+            build-reference-win/Testing/Temporary/
+            build-reference-fixtures/manifest.json
+          if-no-files-found: error
+      - name: Fail if validation failed
+        if: always()
+        run: |
+          if ('${{ steps.tests.outcome }}' -ne 'success' -or '${{ steps.renders.outcome }}' -ne 'success' -or '${{ steps.pluginval.outcome }}' -ne 'success') { exit 1 }

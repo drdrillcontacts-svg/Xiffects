@@ -1,4 +1,5 @@
 #include "DSP/Pitch.h"
+#include "DSP/LivePitchBank.h"
 #include "Telemetry.h"
 #include <atomic>
 #include <cstdlib>
@@ -29,6 +30,7 @@ int main() {
     Distortion dist;dist.prepare(48000);Equalizer eq;eq.prepare(48000);
     Phaser phaser;phaser.prepare(48000);Reverb reverb;reverb.prepare(48000);
     PitchShifter shift;shift.prepare(48000);PitchCorrection tune;tune.prepare(48000);
+    LivePitchBank live;live.prepare(48000);
     std::array<bool,12> notes;notes.fill(true);
     TelemetryQueue queue;
     audit.store(true);
@@ -37,6 +39,7 @@ int main() {
         const float in=0.1f*std::sin(2*pi*452*float(i)/48000);
         const float ratio=tune.process(in,0,1,notes,1,12);
         auto x=shift.process({in,in},ratio,1,tune.detector.frequency);
+        x=live.process(x,ratio,1,0.5f,2.f,0.2f,0.2f,tune.detector.frequency);
         const float gain=comp.gain(std::abs(x[0]),-18,4,3);
         for(size_t c=0;c<2;++c) x[c]=eq.process(dist.process(x[c]*gain,c,0.2f,0.5f),c,{1,1,1,1});
         x=phaser.process(x,0.6f,0.4f,0.35f);x=delay.process(x,0.25f,0.5f);

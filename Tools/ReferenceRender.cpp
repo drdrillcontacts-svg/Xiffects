@@ -108,7 +108,8 @@ int main(int argc, char** argv) {
         writeText(juce::File(stem+".timing.csv"),rawTiming);
         std::sort(timing.begin(),timing.end());
         juce::DynamicObject::Ptr report=new juce::DynamicObject();
-        report->setProperty("path","Reference: actual XiffectsAudioProcessor::processBlock");
+        report->setProperty("path",processor.getName()+": actual XiffectsAudioProcessor::processBlock");
+        report->setProperty("liveMode",processor.isLiveMode());
         report->setProperty("measurement","offline synthetic/file rendering, NOT hardware round-trip or VST3 host validation");
         report->setProperty("input",inputFile.getFullPathName());report->setProperty("sampleRate",rate);
         report->setProperty("channels",channels);report->setProperty("blockSize",blockSize);

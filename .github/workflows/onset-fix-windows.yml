@@ -1,12 +1,6 @@
 name: Onset Fix Windows Validation
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - '.github/workflows/onset-fix-windows.yml'
-      - 'Source/DSP/Pitch.h'
-      - 'Tests/OnsetTests.cpp'
-      - 'Tools/ValidateReferenceWindows.py'
 permissions:
   contents: read
 jobs:
@@ -19,6 +13,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: 9c4271ca7b3888f1dab0cdc5fd1d2f2fe511d4d8
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'

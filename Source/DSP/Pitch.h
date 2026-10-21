@@ -73,8 +73,9 @@ private:
 // pitch processing is not phase-identical to dry at non-unity ratios.
 class PitchShifter {
 public:
-    void prepare(double sampleRate) {
-        window=std::max(64,int(sampleRate*0.04));
+    void prepare(double sampleRate,double windowSeconds=0.04,float maximumRatio=4.f) {
+        ratioLimit=maximumRatio;
+        window=std::max(64,int(sampleRate*windowSeconds));
         if(window%2) ++window;
         for(auto& channel:memory) channel.assign(size_t(window*2+8),0);
         position=0; phase=0.5f; sampleRateHz=float(sampleRate); unity.prepare(sampleRate,0,0.01f);
@@ -82,7 +83,7 @@ public:
     }
     int latency() const { return window*3/4+2; }
     std::array<float,2> process(std::array<float,2> input, float ratio, float mix, float fundamental=0) {
-        ratio=std::clamp(ratio,0.25f,4.0f);
+        ratio=std::clamp(ratio,1.f/ratioLimit,ratioLimit);
         const float active=unity.next(std::abs(ratio-1)>1.e-5f?1.f:0.f);
         float targetWindow=float(window);
         if(fundamental>=100 && fundamental<=6400) {
@@ -117,7 +118,7 @@ private:
     int window=1920;
     float phase=0.5f;
     Smoother unity, grain;
-    float sampleRateHz=48000;
+    float sampleRateHz=48000,ratioLimit=4.f;
 };
 
 class PitchCorrection {

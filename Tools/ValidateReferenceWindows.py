@@ -99,6 +99,7 @@ def main():
     p.add_argument('--fixtures', required=True, type=Path)
     p.add_argument('--output', required=True, type=Path)
     p.add_argument('--require-onset-a4', action='store_true')
+    p.add_argument('--require-live-latency', action='store_true')
     args = p.parse_args()
     args.output.mkdir(parents=True, exist_ok=False)
     manifest = json.loads((args.fixtures/'manifest.json').read_text())
@@ -114,6 +115,10 @@ def main():
             stdout=process.stdout, stderr=process.stderr), indent=2))
         if process.returncode:
             raise RuntimeError(process.stderr)
+        if args.require_live_latency:
+            info=json.loads(Path(str(wav)+'.json').read_text())
+            assert info['liveMode'] is True
+            assert 0 < info['hostReportedLatencySamples']/info['sampleRate'] < .013
         results.append(analyse(entry, wav))
     report = dict(measurement='Actual product processor, offline synthetic WAV; not VST3 host or hardware',
         analysis='Telemetry compared at block end; no delay compensation for detection. Octave error threshold >=600 cents. Output FFT dominant peak 50-4000 Hz, not proof of perceptual quality. Static fixtures only for output cents; variable pitch excluded.',

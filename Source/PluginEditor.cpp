@@ -34,8 +34,8 @@ XiffectsAudioProcessorEditor::XiffectsAudioProcessorEditor (XiffectsAudioProcess
     if (auto* constrainer = getConstrainer()) constrainer->setFixedAspectRatio(1.6);
     setSize (1440, 900);
     startTimerHz(24);
-    brand.setText ("Xiffects", juce::dontSendNotification);
-    brand.setFont (juce::Font (42.0f, juce::Font::plain));
+    brand.setText (p.isLiveMode()?"Xiffects LIVE":"Xiffects", juce::dontSendNotification);
+    brand.setFont (juce::Font (p.isLiveMode()?30.0f:42.0f, juce::Font::plain));
     brand.setColour (juce::Label::textColourId, white);
     brand.setJustificationType (juce::Justification::centredLeft);
     addAndMakeVisible (brand);
@@ -376,7 +376,10 @@ void XiffectsAudioProcessorEditor::showSettings() {
         if(choice==4) juce::AlertWindow::showMessageBoxAsync(juce::MessageBoxIconType::InfoIcon,
             "Xiffects — Unique Sounds by Xivan",
             "Monophonic pitch analysis: 100–1600 Hz. Use a clean, isolated sax input.\n"
-            "Pitch processing adds about 60 ms of constant audio latency, including bypass. "
+            + juce::String(safe->processor.isLiveMode()?
+            "LIVE EXPERIMENTAL: nominal plugin delay about 12 ms, including bypass. " :
+            "STUDIO: nominal plugin delay about 60 ms, including bypass. ") +
+            "Shorter Live grains may colour attacks and low notes. "
             "The host is notified. Analysis needs additional settling time.\n"
             "Red graph: applied correction estimate, not a second output detector. "
             "Granular shifting can colour attacks, vibrato and breath noise. No formant preservation.\n"

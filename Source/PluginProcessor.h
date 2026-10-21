@@ -2,6 +2,10 @@
 #include <JuceHeader.h>
 #include "DSP/Effects.h"
 #include "DSP/Pitch.h"
+#include "DSP/LivePitchBank.h"
+#ifndef XIFFECTS_LIVE_MODE
+#define XIFFECTS_LIVE_MODE 0
+#endif
 #include "Telemetry.h"
 
 class XiffectsAudioProcessor final : public juce::AudioProcessor
@@ -18,7 +22,8 @@ public:
     juce::AudioProcessorEditor* createEditor() override;
     bool hasEditor() const override { return true; }
 
-    const juce::String getName() const override { return "Xiffects"; }
+    static constexpr bool isLiveMode() { return XIFFECTS_LIVE_MODE != 0; }
+    const juce::String getName() const override { return isLiveMode()?"Xiffects Live":"Xiffects"; }
     bool acceptsMidi() const override { return false; }
     bool producesMidi() const override { return false; }
     bool isMidiEffect() const override { return false; }
@@ -50,6 +55,7 @@ private:
     std::array<xiffects::Smoother, controlCount> smooth;
     std::array<std::atomic<float>*,12> noteValues{};
     xiffects::PitchCorrection correction;
+    xiffects::LivePitchBank livePitch;
     xiffects::PitchShifter tuneShifter, octaveShifter, pitchShifter;
     std::array<std::vector<float>,2> bypassDelay;
     size_t bypassPosition=0;

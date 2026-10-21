@@ -87,7 +87,8 @@ void XiffectsAudioProcessor::prepareToPlay (double sampleRate, int)
 {
     correction.prepare(sampleRate); tuneShifter.prepare(sampleRate);
     octaveShifter.prepare(sampleRate); pitchShifter.prepare(sampleRate);
-    const int latency=tuneShifter.latency()+octaveShifter.latency();
+    if(isLiveMode()) livePitch.prepare(sampleRate);
+    const int latency=isLiveMode()?livePitch.latency():tuneShifter.latency()+octaveShifter.latency();
     setLatencySamples(latency);
     for(auto& channel:bypassDelay) channel.assign(size_t(latency),0);
     bypassPosition=0; telemetryCounter=0; waveformMin=waveformMax=0;
@@ -127,6 +128,11 @@ void XiffectsAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
         const float tuningRatio=correction.process(x[0],int(target[tuneKey]),int(target[tuneScale]),
             notes,v[tuneStrength]*0.01f,v[tuneSpeed]);
         const float fundamental=correction.detector.frequency;
+        if(isLiveMode()) {
+            x=livePitch.process(x,tuningRatio,v[tuneOn]*v[tuneMix]*0.01f,
+                std::exp2(v[octShift]),std::exp2(v[pitchShift]/12),
+                v[octOn]*v[octMix]*0.01f,v[pitchOn]*v[pitchMix]*0.01f,fundamental);
+        } else {
         x=tuneShifter.process(x,tuningRatio,v[tuneOn]*v[tuneMix]*0.01f,fundamental);
         const float octaveAmount=v[octOn]*v[octMix]*0.01f, pitchAmount=v[pitchOn]*v[pitchMix]*0.01f;
         const float normalizer=std::max(1.f,octaveAmount+pitchAmount);
@@ -134,6 +140,7 @@ void XiffectsAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
         const auto octaved=octaveShifter.process(x,std::exp2(v[octShift]),octaveAmount/normalizer,shiftedFundamental);
         const auto pitched=pitchShifter.process(x,std::exp2(v[pitchShift]/12),pitchAmount/normalizer,shiftedFundamental);
         for(size_t c=0;c<2;++c) x[c]=octaved[c]+pitched[c]-octaveShifter.dryOutput[c];
+        }
         const float gain=compressor.gain(peak,v[threshold],v[ratio],v[makeup]);
         for(auto& sample:x) sample=blend(sample,sample*gain,v[compOn]);
         for(size_t c=0;c<2;++c) x[c]=blend(x[c],distortion.process(x[c],c,v[drive]*0.01f,v[tone]*0.01f),v[distOn]*v[distMix]*0.01f);
