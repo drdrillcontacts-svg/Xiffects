@@ -1,6 +1,8 @@
 #pragma once
 #include <JuceHeader.h>
 #include "DSP/Effects.h"
+#include "DSP/Pitch.h"
+#include "Telemetry.h"
 
 class XiffectsAudioProcessor final : public juce::AudioProcessor
 {
@@ -32,6 +34,7 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
 
     std::atomic<float> inputPeak {0}, outputPeak {0};
+    xiffects::TelemetryQueue telemetry;
 
     using APVTS = juce::AudioProcessorValueTreeState;
     APVTS parameters;
@@ -41,9 +44,17 @@ private:
     enum Control { compOn, revOn, delayOn, distOn, eqOn, phaserOn,
         threshold, ratio, makeup, revMix, revSize, decay, delayMix, delayTime,
         feedback, drive, tone, distMix, low, mid, high, air, rate, depth,
-        phaserFeedback, output, power, controlCount };
+        phaserFeedback, output, power, octOn, octMix, octShift, pitchOn, pitchMix, pitchShift,
+        tuneOn, tuneStrength, tuneSpeed, tuneMix, tuneKey, tuneScale, controlCount };
     std::array<std::atomic<float>*, controlCount> values{};
     std::array<xiffects::Smoother, controlCount> smooth;
+    std::array<std::atomic<float>*,12> noteValues{};
+    xiffects::PitchCorrection correction;
+    xiffects::PitchShifter tuneShifter, octaveShifter, pitchShifter;
+    std::array<std::vector<float>,2> bypassDelay;
+    size_t bypassPosition=0;
+    int telemetryCounter=0;
+    float waveformMin=0, waveformMax=0;
     xiffects::Compressor compressor;
     xiffects::Delay delay;
     xiffects::Distortion distortion;

@@ -11,8 +11,11 @@ XiffectsAudioProcessor::XiffectsAudioProcessor()
         "COMP_THRESHOLD","COMP_RATIO","COMP_MAKEUP","REV_MIX","REV_SIZE","REV_DECAY",
         "DLY_MIX","DLY_TIME","DLY_FEEDBACK","DIST_DRIVE","DIST_TONE","DIST_MIX",
         "EQ_LOW","EQ_MID","EQ_HIGH","EQ_AIR","PHASER_RATE","PHASER_DEPTH",
-        "PHASER_FEEDBACK","OUTPUT","POWER"};
+        "PHASER_FEEDBACK","OUTPUT","POWER","OCT_ON","OCT_MIX","OCT_SHIFT",
+        "PITCH_ON","PITCH_MIX","PITCH_SEMITONES","TUNE_ON","TUNE_STRENGTH",
+        "TUNE_SPEED","TUNE_MIX","TUNE_KEY","TUNE_SCALE"};
     for (size_t i=0; i<values.size(); ++i) values[i]=parameters.getRawParameterValue(ids[i]);
+    for(size_t i=0;i<noteValues.size();++i) noteValues[i]=parameters.getRawParameterValue("TUNE_NOTE_"+juce::String(int(i)));
 }
 
 XiffectsAudioProcessor::APVTS::ParameterLayout XiffectsAudioProcessor::createParameterLayout()
@@ -82,6 +85,12 @@ XiffectsAudioProcessor::APVTS::ParameterLayout XiffectsAudioProcessor::createPar
 
 void XiffectsAudioProcessor::prepareToPlay (double sampleRate, int)
 {
+    correction.prepare(sampleRate); tuneShifter.prepare(sampleRate);
+    octaveShifter.prepare(sampleRate); pitchShifter.prepare(sampleRate);
+    const int latency=tuneShifter.latency()+octaveShifter.latency();
+    setLatencySamples(latency);
+    for(auto& channel:bypassDelay) channel.assign(size_t(latency),0);
+    bypassPosition=0; telemetryCounter=0; waveformMin=waveformMax=0;
     compressor.prepare(sampleRate); delay.prepare(sampleRate);
     distortion.prepare(sampleRate); equalizer.prepare(sampleRate);
     phaser.prepare(sampleRate); reverb.prepare(sampleRate);
@@ -101,14 +110,30 @@ void XiffectsAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
     juce::ScopedNoDenormals noDenormals;
     std::array<float, controlCount> target{}, v{};
     for(size_t i=0;i<values.size();++i) target[i]=values[i]->load();
+    std::array<bool,12> notes{};
+    for(size_t i=0;i<notes.size();++i) notes[i]=noteValues[i]->load()>0.5f;
     float inPeak=0, outPeak=0;
     const int channels=buffer.getNumChannels();
     const auto blend=[](float dry,float wet,float mix) { return dry+(wet-dry)*mix; };
     for(int n=0;n<buffer.getNumSamples();++n) {
         for(size_t i=0;i<v.size();++i) v[i]=smooth[i].next(target[i]);
         std::array<float,2> x {buffer.getSample(0,n), channels>1?buffer.getSample(1,n):buffer.getSample(0,n)};
-        const auto dry=x;
+        std::array<float,2> dry{};
+        for(size_t c=0;c<2;++c) {
+            dry[c]=bypassDelay[c][bypassPosition]; bypassDelay[c][bypassPosition]=x[c];
+        }
+        bypassPosition=(bypassPosition+1)%bypassDelay[0].size();
         const float peak=std::max(std::abs(x[0]),std::abs(x[1])); inPeak=std::max(inPeak,peak);
+        const float tuningRatio=correction.process(x[0],int(target[tuneKey]),int(target[tuneScale]),
+            notes,v[tuneStrength]*0.01f,v[tuneSpeed]);
+        const float fundamental=correction.detector.frequency;
+        x=tuneShifter.process(x,tuningRatio,v[tuneOn]*v[tuneMix]*0.01f,fundamental);
+        const float octaveAmount=v[octOn]*v[octMix]*0.01f, pitchAmount=v[pitchOn]*v[pitchMix]*0.01f;
+        const float normalizer=std::max(1.f,octaveAmount+pitchAmount);
+        const float shiftedFundamental=fundamental*((v[tuneOn]*v[tuneMix]>50)?tuningRatio:1.f);
+        const auto octaved=octaveShifter.process(x,std::exp2(v[octShift]),octaveAmount/normalizer,shiftedFundamental);
+        const auto pitched=pitchShifter.process(x,std::exp2(v[pitchShift]/12),pitchAmount/normalizer,shiftedFundamental);
+        for(size_t c=0;c<2;++c) x[c]=octaved[c]+pitched[c]-octaveShifter.dryOutput[c];
         const float gain=compressor.gain(peak,v[threshold],v[ratio],v[makeup]);
         for(auto& sample:x) sample=blend(sample,sample*gain,v[compOn]);
         for(size_t c=0;c<2;++c) x[c]=blend(x[c],distortion.process(x[c],c,v[drive]*0.01f,v[tone]*0.01f),v[distOn]*v[distMix]*0.01f);
@@ -124,6 +149,14 @@ void XiffectsAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
             // Safety ceiling only on the processed path; global bypass remains transparent.
             const float sample=blend(dry[size_t(c)],std::clamp(x[size_t(c)]*outputGain,-1.0f,1.0f),v[power]);
             buffer.setSample(c,n,sample); outPeak=std::max(outPeak,std::abs(sample));
+        }
+        waveformMin=std::min(waveformMin,buffer.getSample(0,n));
+        waveformMax=std::max(waveformMax,buffer.getSample(0,n));
+        if(++telemetryCounter>=256) {
+            const float applied=correction.detected>0?correction.detected+
+                (correction.corrected-correction.detected)*v[tuneOn]*v[tuneMix]*0.01f*v[power]:0;
+            telemetry.push({correction.detected,applied,waveformMin,waveformMax});
+            telemetryCounter=0; waveformMin=waveformMax=0;
         }
     }
     inputPeak.store(inPeak,std::memory_order_relaxed);
