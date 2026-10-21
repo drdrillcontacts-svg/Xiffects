@@ -46,6 +46,12 @@ int main() {
     XiffectsAudioProcessor processor;
     std::unique_ptr<juce::AudioProcessorEditor> editor(processor.createEditor());
     require(editor!=nullptr && editor->getWidth()==1440,"Native editor creation");
-    editor->setSize(1152,720);editor->setSize(1728,1080);
+    editor->setSize(1152,720);editor->setSize(1728,1080);editor->setSize(1440,900);
+    const auto snapshot=editor->createComponentSnapshot(editor->getLocalBounds());
+    require(snapshot.isValid(),"Software-rendered editor snapshot");
+    juce::File screenshot=juce::File::getCurrentWorkingDirectory().getChildFile("Xiffects-UI.png");
+    if(auto stream=screenshot.createOutputStream()) {
+        juce::PNGImageFormat format;require(format.writeImageToStream(snapshot,*stream),"Save UI snapshot");
+    } else require(false,"Screenshot output file");
     std::cout<<"Host state, mono/stereo, variable blocks, bypass latency and editor smoke tests passed\n";
 }

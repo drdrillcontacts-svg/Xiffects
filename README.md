@@ -1,70 +1,103 @@
 # Xiffects — Unique Sounds by Xivan
 
-C++17 / JUCE 8.0.6 soprano saxophone multi-effect, targeting VST3 and
-Standalone. **Incremental development build, not a finished commercial plugin.**
+Native C++17 / JUCE 8.0.6 soprano saxophone multi-effect, VST3 and Standalone.
+This is a working implementation in development, **not an acoustically validated
+commercial release**. No web view or full-interface screenshot is used as UI.
 
-## Verified status
+## Audio modules
 
-The portable DSP test executable was built and run locally with GCC 12,
-CTest, and separately AddressSanitizer/UndefinedBehaviorSanitizer. Tests pass
-at 44.1, 48 and 96 kHz. Full JUCE configuration was attempted but is blocked
-in this sandbox by missing pkg-config and Linux audio/GUI development packages.
-**Neither VST3 nor Standalone has been built or auditioned in this environment.**
-The updated Windows workflow has not yet been run on these changes; no compiled
-artifact is claimed available. A missing `createPluginFilter` factory was added.
+All nine module enable switches and controls are connected to processing:
 
-## Implemented in source
+| Module | Implementation |
+| --- | --- |
+| Octaver | Pitch-synchronous dual-grain shifting, −2 to +2 octaves |
+| Compressor | Linked peak detector; 10 ms attack, 120 ms release; threshold, ratio, makeup |
+| Reverb | Four parallel damped combs per channel; interpolated room-size taps and approximate RT60 |
+| Delay | Fractional stereo delay, 10 ms–2 s, feedback capped at 95% |
+| Distortion | Tanh saturation with first-order antiderivative anti-aliasing and low-pass tone |
+| EQ | Four complementary broad one-pole bands; unity reconstruction at zero gains |
+| Pitch Shifter | Pitch-synchronous dual-grain shifting, ±12 semitones |
+| Phaser | Six all-pass stages, rate, depth and feedback |
+| Auto Tune | Decimated YIN analysis, scale/manual targeting, hysteresis, smoothed correction and audio resynthesis |
 
-- Six independently testable effects in `Source/DSP/Effects.h`:
-  linked-peak compressor (10 ms attack / 120 ms release), fractional delay,
-  tanh distortion with tone filter, complementary four-band EQ, six-stage
-  phaser, and four parallel damped-comb reverb channels.
-- Processing chain: compressor → distortion → EQ → phaser → delay → reverb
-  → output trim → safety ceiling. Mono and stereo use the same chain.
-- Existing effect parameters retained. Values and enable transitions are
-  smoothed; APVTS attachments reflect automation and restored state.
-- Global POWER crossfades to untouched dry input; OUTPUT is host-automatable.
-  Bypassed effects continue ticking, preserving their internal tails.
-- Preallocated delay/reverb storage; no allocation, locks or file I/O in the
-  sample loop. Parameter pointers are cached during construction.
-- Hero crop from the supplied reference embedded with JUCE BinaryData, real
-  JUCE controls, separated module panels, scalable 1440×900 layout (minimum
-  1152×720), actual block peak input/output meters, factory preset recipes.
-- State serialization retains all original IDs plus POWER. Factory preset
-  recipes modify implemented effect parameters, not manual note selections;
-  their dropdown label is not a serialized preset identity.
-- Scale/target-note helper with all eight requested scales: effective allowed
-  notes are the intersection of the transposed scale and manual switches.
-  Empty selection returns unchanged pitch. This helper is tested but **not yet
-  connected to pitch detection/correction**.
+Chain: correction → parallel octaver/pitch voices → compressor → distortion →
+EQ → phaser → delay → reverb → output trim / safety ceiling. Octaver and pitch
+mixes are normalized if their sum exceeds 100%, avoiding an inverted dry voice.
+Compressor sidechain follows original input peaks. Analysis uses the left/mono
+input (rather than cancelling anti-phase stereo by summing it).
 
-## Explicitly unfinished
+Parameter IDs from the starter are retained; POWER was added. All parameters
+are host-automatable and serialized through APVTS. Enabled effects and continuous
+parameters are smoothed. Allocation occurs in prepare, not in the audio loop.
+DSP is separate from the native GUI, with a lock-free SPSC telemetry queue.
 
-- Octaver, Pitch Shifter, pitch detection and pitch correction remain pending.
-  Their controls are visibly marked with `*` and disabled, not represented as
-  working effects. Parameters remain present for state compatibility.
-- Note switches remain editable/persistent but do not currently change audio.
-  They are not yet a custom piano keyboard. There is no live pitch graph or
-  waveform monitor; the starter's invented meter values/waveform were removed.
-- No save/load preset browser or settings panel yet. Host project state works
-  through the existing serialization, but requires host integration testing.
-- Visual work is an approximation, not pixel-identical or visually verified
-  in a running JUCE window. See `Assets/README.md` for photograph provenance.
-  An original standalone photograph is still needed for the final hero.
-- Reverb is an early comb-bank implementation, not a polished hall algorithm.
-  Changing room size can cause discontinuities; changing delay time bends pitch.
-  Distortion is not oversampled and may alias. EQ bands are broad one-pole
-  complements, not parametric biquads. CPU profiling and audio-thread allocation
-  instrumentation are still needed. No pitch-related latency is introduced yet.
-- Processed output uses a hard ±1 safety ceiling, not a transparent limiter.
-  Keep gain conservative; clipping can distort. Global bypass is not clipped.
-- A conservative 300-second tail is reported to accommodate maximum delay
-  feedback; dynamic tail reporting is not implemented.
+## Pitch correction / manual notes
 
-## Windows build
+- Keys C–B, eight scales: Chromatic, Major, Minor, Harmonic Minor, ascending
+  Melodic Minor, Dorian, Mixolydian, major Pentatonic.
+- Effective targets = selected scale transposed by key **AND** manual switches.
+  To use any arbitrary manual set, select Chromatic first. Red key indicators
+  mean effective permission; grey keys may be manually off or out of scale.
+- Nearest allowed note, with 15-cent hysteresis to reduce boundary chatter.
+  Removing a target immediately invalidates hysteresis. An empty mask releases
+  to unity rather than selecting an unintended note.
+- Strength scales the semitone correction; Retune Speed is its smoothing time
+  in milliseconds. Mix blends the delayed dry signal and corrected signal.
+- Detector: approximately 12–16 kHz analysis rate, 512-sample window, 128-sample
+  hop, YIN normalized difference with parabolic interpolation. Intended range
+  **100–1600 Hz**, with confidence/energy gating for silence and unpitched input.
+- Shifter: two complementary Hann grains; grain length follows an even number
+  of detected periods. Left/right channels share phase for stereo coherence.
+- Pitch graph: grey is detected input MIDI pitch, red is the **applied correction
+  estimate**, not an independent output analysis. With partial wet/dry mix there
+  are two fundamentals; the red curve is only an indicative interpolation.
 
-Install Visual Studio 2022 with Desktop C++ tools, CMake 3.22+, and Git.
-The first configure downloads JUCE from GitHub.
+### Latency and quality limits
+
+**About 60 ms fixed audio latency**, reported to the host, including POWER-off
+bypass and all-effect-bypass. Each of two pitch stages has a nominal ~30 ms delay.
+Analysis needs another ~32–43 ms of input before a confident decision. This is
+not a low-latency stage-monitoring solution. Host bypass behavior depends on the
+host; the plugin's POWER control uses a latency-aligned dry delay.
+
+Wet pitch grains have variable read positions about the nominal delay; dry/wet
+alignment is nominal, not phase-perfect after shifting. Transients and breath
+noise can smear, especially at ±2 octaves or weak fundamentals. There is **no
+formant preservation**, polyphonic correction, or commercial Auto-Tune engine.
+Strong overtones can still cause octave errors. Use isolated monophonic input.
+Synthetic tests are not a substitute for saxophone recordings/listening tests.
+
+The reverb is a basic comb bank rather than a finished hall algorithm; size/time
+changes can bend pitch. Distortion anti-aliasing reduces but does not eliminate
+aliasing. The EQ is not a parametric biquad EQ. Processed output is hard-clamped
+to ±1 as a safety ceiling, **not** transparently limited; leave headroom. Bypassed
+audio is not clamped. The conservatively reported effect tail is 300 seconds.
+
+## Native interface
+
+- Real JUCE controls with custom charcoal/crimson rotary drawing and value units.
+- Nine separated module panels; EQ faders; dedicated tune panel with an editable
+  chromatic piano, key/scale, strength and speed. Tune Mix is in its module.
+- Live input/output peak meters and actual output min/max waveform envelope.
+- Embedded hero cropped from the supplied reference, preserving the musician.
+  See `Assets/README.md`: this is not an independently supplied original photo.
+- Resizable, fixed-aspect 1440×900 design; 1152×720 minimum. Settings provides
+  80/100/120% sizes and processing/latency information.
+- Factory recipes; Default resets every parameter to its default. Other recipes
+  preserve note selections and change a subset of effect parameters.
+- SAVE / LOAD `.xiffects` XML files on the message thread; invalid/unknown or
+  nonfinite parameter values are rejected, numeric values are range-clamped.
+  Host projects save all parameter values. Preset dropdown text and UI zoom
+  are not part of audio state; the label is not an unsaved-change indicator.
+
+The reference is a visual direction, not a claim of pixel-exact reproduction.
+Original photograph, logo/font assets and native-window visual review remain
+important before a finished branded release.
+
+## Build on Windows
+
+Install Visual Studio 2022 Desktop C++, CMake 3.22+, and Git. First configure
+fetches JUCE from GitHub.
 
 ```powershell
 cmake -S . -B build -A x64
@@ -72,13 +105,19 @@ cmake --build build --config Release --parallel 2
 ctest --test-dir build -C Release --output-on-failure
 ```
 
-Products are under `build/Xiffects_artefacts/Release/VST3/` and `Standalone/`.
-The GitHub Actions workflow builds these targets, runs DSP tests, then uploads
-`Xiffects-Windows-x64` only if the preceding steps succeed.
+Products: `build/Xiffects_artefacts/Release/VST3/` and `Standalone/`.
+Install the complete `.vst3` bundle under the host's VST3 search directory (usually
+`C:\Program Files\Common Files\VST3`). Rescan in REAPER/Cubase or another host.
+Avoid enabling speaker-to-microphone feedback when testing Standalone.
 
-## Linux build dependencies
+GitHub Actions builds Windows binaries, runs portable and JUCE host tests, then
+uploads `Xiffects-Windows-x64` **only after success**. The artifact also includes a
+software-rendered native editor PNG. Download it from a successful workflow run:
+https://github.com/drdrillcontacts-svg/Xiffects/actions
 
-On an unrestricted Debian/Ubuntu machine:
+## Linux dependencies
+
+On an unrestricted Debian/Ubuntu system:
 
 ```sh
 sudo apt-get install build-essential cmake ninja-build pkg-config \
@@ -89,36 +128,34 @@ cmake --build build --parallel 2
 ctest --test-dir build --output-on-failure
 ```
 
-Browser and curl support are disabled. This sandbox cannot use the normal
-system package repositories under its outbound-host restrictions.
+JUCE host/editor smoke tests require a graphical session (or `xvfb-run` on CI).
+Browser and curl support are disabled. The Arena sandbox lacks Linux GUI/audio
+development packages and cannot reach normal system package repositories;
+full plugin verification is therefore performed by the Windows workflow.
 
-## Portable tests (no JUCE, GUI libraries, or network needed)
+## Tests without JUCE / system GUI libraries
 
 ```sh
-cmake -S . -B build-tests -DXIFFECTS_DSP_ONLY=ON
+cmake -S . -B build-tests -DXIFFECTS_DSP_ONLY=ON -DCMAKE_BUILD_TYPE=Release
 cmake --build build-tests
 ctest --test-dir build-tests --output-on-failure
-# Optional memory / undefined-behaviour checks:
-g++ -std=c++17 -Wall -Wextra -Werror -fsanitize=address,undefined \
-  -I Source Tests/DSPTests.cpp -o /tmp/xiffects-tests
-/tmp/xiffects-tests
+# Optional portable sanitizers (GCC/Clang):
+g++ -O1 -g -std=c++17 -fsanitize=address,undefined -I Source \
+  Tests/PitchTests.cpp -o /tmp/xiffects-pitch-tests
+/tmp/xiffects-pitch-tests
 ```
 
-Tests cover compressor steady-state ratio, delay impulse timing/channel
-isolation, unity EQ, finite modulation/reverb output, nonzero effect response,
-key transposition, manual exclusions and empty note-map behavior. They do not
-replace listening tests, plugin validation or host automation/state round trips.
+Portable tests run locally at 44.1, 48 and 96 kHz and cover:
+- Compressor ratio, delay timing/isolation, EQ unity, finite effect responses.
+- Harmonic-rich pitch detection; silence/noise rejection; manual exclusions;
+  empty masks and zero strength.
+- Independent spectral checks of octave/pitch output, end-to-end corrected audio,
+  unity impulse/declared latency and coherent stereo channels.
+- No ordinary heap allocations during the tested combined DSP loop; concurrent
+  SPSC queue ordering/wraparound. This does not constitute complete host-side
+  real-time certification or an exhaustive CPU benchmark.
 
-## Next acceptance gates
-
-1. Run Windows CI, fix any JUCE/compiler errors, validate VST3 in a host, test
-   mono/stereo and automation/state at multiple block sizes.
-2. Review the native UI against the reference, implement custom knobs/piano,
-   preset file controls/settings and acquire the original photograph.
-3. Implement and test pitch analysis on synthetic signals and sax recordings;
-   add confidence gating, target hysteresis and manual-mask integration.
-4. Implement a measured-latency pitch shifter with aligned dry/wet paths;
-   reuse it for Octaver and correction. Evaluate transitions and artifacts
-   before enabling these controls. Add genuine detected/corrected pitch traces.
-5. Refine reverb, oversample distortion, add limiting, profile CPU, validate
-   silence/denormals, stress automation, and test multiple DAWs before release.
+Full JUCE host tests additionally exercise mono/stereo, empty and variable blocks
+(including blocks larger than prepare's hint), latency-compensated global bypass,
+all-parameter state round-trip, native editor construction/resizing and screenshot.
+See `docs/VALIDATION.md` for release acceptance gates and observed verification.

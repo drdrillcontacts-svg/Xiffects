@@ -53,12 +53,21 @@ public:
     }
 };
 struct Distortion {
-    std::array<float, 2> low{};
+    std::array<float, 2> low{}, previous{};
     float sr = 48000;
-    void prepare(double rate) { sr = float(rate); low.fill(0); }
+    void prepare(double rate) { sr = float(rate); low.fill(0); previous.fill(0); }
     float process(float in, size_t channel, float drive, float tone) {
         const float amount = 1 + drive * 30;
-        const float shaped = std::tanh(in * amount) / std::sqrt(amount);
+        // First-order antiderivative anti-aliasing for the tanh waveshaper.
+        // Stable log(cosh(x)) avoids overflow at large input levels.
+        const auto integral=[](float x) {
+            const float a=std::abs(x);return a+std::log1p(std::exp(-2*a))-0.69314718056f;
+        };
+        const float current=in*amount, delta=current-previous[channel];
+        const float shaped=(std::abs(delta)>1.e-3f?
+            (integral(current)-integral(previous[channel]))/delta:
+            std::tanh((current+previous[channel])*0.5f))/std::sqrt(amount);
+        previous[channel]=current;
         const float coefficient = 1 - std::exp(-2*pi*(400 + tone*14000)/sr);
         low[channel] += coefficient * (shaped - low[channel]); return low[channel];
     }
@@ -112,12 +121,15 @@ public:
     float process(float in, size_t c, float size, float decay) {
         float out=0;
         for(auto& comb:combs[c]) {
-            const size_t length=std::max(size_t(1),size_t(float(comb.data.size())*(0.35f+size*0.65f)));
-            comb.pos %= length;
-            const float y=comb.data[comb.pos]; comb.damp += 0.35f*(y-comb.damp);
-            const float feedback=std::pow(0.001f,float(length)/(sr*decay));
+            const float length=float(comb.data.size()-1)*(0.35f+size*0.65f);
+            float read=float(comb.pos)-length;
+            if(read<0) read+=float(comb.data.size());
+            const auto index=size_t(read); const float fraction=read-float(index);
+            const float y=comb.data[index]*(1-fraction)+comb.data[(index+1)%comb.data.size()]*fraction;
+            comb.damp += 0.35f*(y-comb.damp);
+            const float feedback=std::pow(0.001f,length/(sr*decay));
             comb.data[comb.pos]=in + feedback*comb.damp;
-            comb.pos=(comb.pos+1)%length; out+=y*0.25f;
+            comb.pos=(comb.pos+1)%comb.data.size(); out+=y*0.25f;
         }
         return out;
     }
