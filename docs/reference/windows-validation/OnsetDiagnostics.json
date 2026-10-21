@@ -1,0 +1,77 @@
+[
+  {
+    "id": "detuned_452_44100",
+    "expected": 440.0,
+    "measured": 466.0998001126861,
+    "applied_midi": 69.9999847,
+    "first_voiced": [
+      {
+        "frame": "22",
+        "available_by_block_end_sample": "5888",
+        "detected_midi": "69.5142899",
+        "applied_estimate_midi": "69.6193619",
+        "min": "0.0000000",
+        "max": "0.0000000"
+      },
+      {
+        "frame": "23",
+        "available_by_block_end_sample": "6144",
+        "detected_midi": "69.4664917",
+        "applied_estimate_midi": "69.7176437",
+        "min": "0.0000000",
+        "max": "0.0000000"
+      }
+    ],
+    "onset_upper_bound_samples": 1478
+  },
+  {
+    "id": "detuned_452_48000",
+    "expected": 440.0,
+    "measured": 466.05295946486183,
+    "applied_midi": 70.0,
+    "first_voiced": [
+      {
+        "frame": "23",
+        "available_by_block_end_sample": "6144",
+        "detected_midi": "69.5866623",
+        "applied_estimate_midi": "69.5873795",
+        "min": "0.0000000",
+        "max": "0.0000000"
+      },
+      {
+        "frame": "24",
+        "available_by_block_end_sample": "6400",
+        "detected_midi": "69.5866623",
+        "applied_estimate_midi": "69.7354355",
+        "min": "0.0000000",
+        "max": "0.0000000"
+      }
+    ],
+    "onset_upper_bound_samples": 1344
+  },
+  {
+    "id": "detuned_452_96000",
+    "expected": 440.0,
+    "measured": 466.04014803153666,
+    "applied_midi": 69.99999615,
+    "first_voiced": [
+      {
+        "frame": "47",
+        "available_by_block_end_sample": "12288",
+        "detected_midi": "69.5866699",
+        "applied_estimate_midi": "69.5870285",
+        "min": "0.0000000",
+        "max": "0.0000000"
+      },
+      {
+        "frame": "48",
+        "available_by_block_end_sample": "12544",
+        "detected_midi": "69.5866699",
+        "applied_estimate_midi": "69.6693192",
+        "min": "0.0000000",
+        "max": "0.0000000"
+      }
+    ],
+    "onset_upper_bound_samples": 2688
+  }
+]

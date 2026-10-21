@@ -144,3 +144,11 @@ build-reference-win/Release/XiffectsReferenceRender.exe build-reference-fixtures
 - **Source، Assets، تست‌های قبلی، ابزار PitchProfile قبلی و workflow تغییر نکرده‌اند.**
 
 پس از بررسی این گزارش و اجرای native/Windows، می‌توان دربارهٔ مرحلهٔ مقایسه تصمیم گرفت. این مرحله مجوز حذف Reference یا شروع جایگزینی با Live نیست.
+
+## به‌روزرسانی اعتبارسنجی Windows
+
+وضعیت‌های «اجرا‌نشده» در متن بالا، سابقهٔ مرحلهٔ ثبت اولیه‌اند. اجرای بعدی
+Windows x64 Release، ReferenceRender و pluginval انجام شد؛ یک خطای correction
+در onset و سه عبور از deadline اسمی offline نیز ثبت شدند. گزارش تفکیک‌شدهٔ
+نتایج، محدودیت REAPER/سخت‌افزار و artifactها:
+[گزارش Windows](windows-validation/REPORT.md).
