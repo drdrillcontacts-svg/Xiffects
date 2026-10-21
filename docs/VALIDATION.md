@@ -14,6 +14,16 @@
 
 ## Windows CI
 
+Verified successful run: https://github.com/drdrillcontacts-svg/Xiffects/actions/runs/39633323816
+
+Source commit: `5f679ab8abc3054a480208fafc7598590b2aae30`.
+Windows VST3/Standalone build, CTest (DSP, Pitch, Realtime, Host), and artifact
+upload succeeded. Host test generated a software-rendered native editor PNG.
+Artifact: `Xiffects-Windows-x64`, ID `12359853536`, 6,091,357 bytes.
+Local download of GitHub artifacts is blocked by this sandbox's outbound host
+allowlist (Azure blob storage); the artifact is downloadable from the run page.
+The snapshot has not been visually inspected locally.
+
 Changes are pushed to `arena/dc90c04d-xiffects`, with full JUCE build and host tests.
 Consult the exact commit's Actions run; never infer success from an earlier run.
 Only successful runs publish downloadable artifacts. Results are reported in the

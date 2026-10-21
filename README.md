@@ -4,6 +4,15 @@ Native C++17 / JUCE 8.0.6 soprano saxophone multi-effect, VST3 and Standalone.
 This is a working implementation in development, **not an acoustically validated
 commercial release**. No web view or full-interface screenshot is used as UI.
 
+## Verified build
+
+Windows VST3 and Standalone builds, DSP/Pitch/Realtime tests and the JUCE host/editor
+smoke test passed for source commit `5f679ab` in
+[Actions run 39633323816](https://github.com/drdrillcontacts-svg/Xiffects/actions/runs/39633323816).
+The [Windows artifact](https://github.com/drdrillcontacts-svg/Xiffects/actions/runs/39633323816/artifacts/12359853536)
+contains the binaries and native UI snapshot (GitHub sign-in may be required).
+This confirms compilation/tests, not listening quality or DAW certification.
+
 ## Audio modules
 
 All nine module enable switches and controls are connected to processing:
