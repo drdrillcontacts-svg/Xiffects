@@ -1,0 +1,6 @@
+/build*/
+/.venv/
+*.user
+.DS_Store
+__pycache__/
+*.pyc

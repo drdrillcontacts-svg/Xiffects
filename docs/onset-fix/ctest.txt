@@ -1,0 +1,71 @@
+UpdateCTestConfiguration  from :/home/user/Xiffects/build-onset-tests/DartConfiguration.tcl
+Parse Config file:/home/user/Xiffects/build-onset-tests/DartConfiguration.tcl
+Test project /home/user/Xiffects/build-onset-tests
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 1
+    Start 1: DSP
+
+1: Test command: /home/user/Xiffects/build-onset-tests/XiffectsDSPTests
+1: Working Directory: /home/user/Xiffects/build-onset-tests
+1: Test timeout computed to be: 1500
+1: DSP tests passed at 44.1, 48 and 96 kHz
+1/5 Test #1: DSP ..............................   Passed    0.17 sec
+test 2
+    Start 2: Pitch
+
+2: Test command: /home/user/Xiffects/build-onset-tests/XiffectsPitchTests
+2: Working Directory: /home/user/Xiffects/build-onset-tests
+2: Test timeout computed to be: 1500
+2: 44100 ratio 0.25 measured 109.9 expected 110
+2: 44100 ratio 0.5 measured 219.8 expected 220
+2: 44100 ratio 1.05946 measured 466.194 expected 466.164
+2: 44100 ratio 2 measured 880.2 expected 880
+2: 44100 ratio 4 measured 1759.9 expected 1760
+2: 48000 ratio 0.25 measured 109.9 expected 110
+2: 48000 ratio 0.5 measured 219.8 expected 220
+2: 48000 ratio 1.05946 measured 466.194 expected 466.164
+2: 48000 ratio 2 measured 880.2 expected 880
+2: 48000 ratio 4 measured 1759.9 expected 1760
+2: 96000 ratio 0.25 measured 109.9 expected 110
+2: 96000 ratio 0.5 measured 219.8 expected 220
+2: 96000 ratio 1.05946 measured 466.194 expected 466.164
+2: 96000 ratio 2 measured 880.2 expected 880
+2: 96000 ratio 4 measured 1759.9 expected 1760
+2: Pitch detection, shift, correction and latency tests passed
+2/5 Test #2: Pitch ............................   Passed    1.39 sec
+test 3
+    Start 3: Onset
+
+3: Test command: /home/user/Xiffects/build-onset-tests/XiffectsOnsetTests
+3: Working Directory: /home/user/Xiffects/build-onset-tests
+3: Test timeout computed to be: 1500
+3: 44100,452Hz,onset5ms,applied=69.0002,audio=439.935,jump=0.0129574
+3: 48000,452Hz,onset5ms,applied=69.0004,audio=439.897,jump=0.0119057
+3: 96000,452Hz,onset5ms,applied=69.0004,audio=439.848,jump=0.00596132
+3: Onset envelope, reacquisition, hysteresis and mask checks passed
+3/5 Test #3: Onset ............................   Passed    0.83 sec
+test 4
+    Start 4: CorrectionRegression
+
+4: Test command: /home/user/Xiffects/build-onset-tests/XiffectsCorrectionRegressionTests
+4: Working Directory: /home/user/Xiffects/build-onset-tests
+4: Test timeout computed to be: 1500
+4: Detector bounds and sample-wise correction regression passed
+4/5 Test #4: CorrectionRegression .............   Passed    0.09 sec
+test 5
+    Start 5: Realtime
+
+5: Test command: /home/user/Xiffects/build-onset-tests/XiffectsRealtimeTests
+5: Working Directory: /home/user/Xiffects/build-onset-tests
+5: Test timeout computed to be: 1500
+5: Zero DSP allocations; concurrent telemetry test passed
+5/5 Test #5: Realtime .........................   Passed    0.03 sec
+
+100% tests passed out of 5
+
+Total Test time (real) =   2.51 sec

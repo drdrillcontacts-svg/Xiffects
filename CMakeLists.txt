@@ -1,6 +1,42 @@
 cmake_minimum_required(VERSION 3.22)
 project(Xiffects VERSION 0.1.0)
 
+include(CTest)
+option(XIFFECTS_DSP_ONLY "Build portable DSP tests without JUCE/system GUI dependencies" OFF)
+if(BUILD_TESTING)
+    add_executable(XiffectsDSPTests Tests/DSPTests.cpp)
+    target_include_directories(XiffectsDSPTests PRIVATE Source)
+    target_compile_features(XiffectsDSPTests PRIVATE cxx_std_17)
+    add_test(NAME DSP COMMAND XiffectsDSPTests)
+    add_executable(XiffectsPitchTests Tests/PitchTests.cpp)
+    target_include_directories(XiffectsPitchTests PRIVATE Source)
+    target_compile_features(XiffectsPitchTests PRIVATE cxx_std_17)
+    add_test(NAME Pitch COMMAND XiffectsPitchTests)
+    add_executable(XiffectsOnsetTests Tests/OnsetTests.cpp)
+    target_include_directories(XiffectsOnsetTests PRIVATE Source)
+    target_compile_features(XiffectsOnsetTests PRIVATE cxx_std_17)
+    add_test(NAME Onset COMMAND XiffectsOnsetTests)
+    add_executable(XiffectsCorrectionRegressionTests Tests/CorrectionRegressionTests.cpp)
+    target_include_directories(XiffectsCorrectionRegressionTests PRIVATE Source)
+    target_compile_features(XiffectsCorrectionRegressionTests PRIVATE cxx_std_17)
+    add_test(NAME CorrectionRegression COMMAND XiffectsCorrectionRegressionTests)
+    find_package(Threads REQUIRED)
+    add_executable(XiffectsRealtimeTests Tests/RealtimeTests.cpp)
+    target_include_directories(XiffectsRealtimeTests PRIVATE Source)
+    target_compile_features(XiffectsRealtimeTests PRIVATE cxx_std_17)
+    target_link_libraries(XiffectsRealtimeTests PRIVATE Threads::Threads)
+    add_test(NAME Realtime COMMAND XiffectsRealtimeTests)
+endif()
+option(XIFFECTS_BUILD_BENCHMARKS "Build offline pitch-path measurement tool (not a live-input test)" OFF)
+if(XIFFECTS_BUILD_BENCHMARKS)
+    add_executable(XiffectsPitchProfile Tools/PitchProfile.cpp)
+    target_include_directories(XiffectsPitchProfile PRIVATE Source)
+    target_compile_features(XiffectsPitchProfile PRIVATE cxx_std_17)
+endif()
+if(XIFFECTS_DSP_ONLY)
+    return()
+endif()
+
 include(FetchContent)
 FetchContent_Declare(
     JUCE
@@ -26,6 +62,7 @@ juce_add_plugin(Xiffects
     COPY_PLUGIN_AFTER_BUILD FALSE
 )
 
+juce_add_binary_data(XiffectsAssets SOURCES Assets/hero.jpg)
 juce_generate_juce_header(Xiffects)
 target_sources(Xiffects PRIVATE
     Source/PluginProcessor.cpp
@@ -38,6 +75,7 @@ target_compile_definitions(Xiffects PUBLIC
     JUCE_VST3_CAN_REPLACE_VST2=0
 )
 target_link_libraries(Xiffects PRIVATE
+    XiffectsAssets
     juce::juce_audio_utils
     juce::juce_audio_processors
     juce::juce_dsp
@@ -46,3 +84,36 @@ target_link_libraries(Xiffects PRIVATE
     juce::juce_recommended_lto_flags
     juce::juce_recommended_warning_flags
 )
+
+if(BUILD_TESTING)
+    add_executable(XiffectsHostTests Tests/HostTests.cpp)
+    target_compile_features(XiffectsHostTests PRIVATE cxx_std_17)
+    target_include_directories(XiffectsHostTests PRIVATE Source
+        $<TARGET_PROPERTY:Xiffects,INCLUDE_DIRECTORIES>)
+    target_compile_definitions(XiffectsHostTests PRIVATE
+        $<TARGET_PROPERTY:Xiffects,COMPILE_DEFINITIONS>)
+    target_link_libraries(XiffectsHostTests PRIVATE Xiffects)
+    add_test(NAME Host COMMAND XiffectsHostTests)
+endif()
+
+# Optional offline harness. Links the same product library, never a DSP copy.
+option(XIFFECTS_BUILD_REFERENCE_TOOLS "Build real-processor offline Reference renderer" OFF)
+if(XIFFECTS_BUILD_REFERENCE_TOOLS)
+    add_executable(XiffectsReferenceRender Tools/ReferenceRender.cpp)
+    target_compile_features(XiffectsReferenceRender PRIVATE cxx_std_17)
+    target_include_directories(XiffectsReferenceRender PRIVATE Source
+        $<TARGET_PROPERTY:Xiffects,INCLUDE_DIRECTORIES>)
+    target_compile_definitions(XiffectsReferenceRender PRIVATE
+        $<TARGET_PROPERTY:Xiffects,COMPILE_DEFINITIONS>)
+    target_link_libraries(XiffectsReferenceRender PRIVATE Xiffects)
+    if(BUILD_TESTING)
+        add_executable(XiffectsReferenceTests Tests/ReferenceTests.cpp)
+        target_compile_features(XiffectsReferenceTests PRIVATE cxx_std_17)
+        target_include_directories(XiffectsReferenceTests PRIVATE Source
+            $<TARGET_PROPERTY:Xiffects,INCLUDE_DIRECTORIES>)
+        target_compile_definitions(XiffectsReferenceTests PRIVATE
+            $<TARGET_PROPERTY:Xiffects,COMPILE_DEFINITIONS>)
+        target_link_libraries(XiffectsReferenceTests PRIVATE Xiffects)
+        add_test(NAME ReferenceProcessor COMMAND XiffectsReferenceTests)
+    endif()
+endif()

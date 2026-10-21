@@ -1,0 +1,14 @@
+{
+  "name": "Reference isolated correction, chromatic A440",
+  "tailSeconds": 0.25,
+  "parameters": {
+    "POWER": 1, "OUTPUT": 0,
+    "OCT_ON": 0, "COMP_ON": 0, "REV_ON": 0, "DLY_ON": 0,
+    "DIST_ON": 0, "EQ_ON": 0, "PITCH_ON": 0, "PHASER_ON": 0,
+    "TUNE_ON": 1, "TUNE_KEY": 0, "TUNE_SCALE": 0,
+    "TUNE_STRENGTH": 100, "TUNE_SPEED": 12, "TUNE_MIX": 100,
+    "TUNE_NOTE_0": 1, "TUNE_NOTE_1": 1, "TUNE_NOTE_2": 1, "TUNE_NOTE_3": 1,
+    "TUNE_NOTE_4": 1, "TUNE_NOTE_5": 1, "TUNE_NOTE_6": 1, "TUNE_NOTE_7": 1,
+    "TUNE_NOTE_8": 1, "TUNE_NOTE_9": 1, "TUNE_NOTE_10": 1, "TUNE_NOTE_11": 1
+  }
+}

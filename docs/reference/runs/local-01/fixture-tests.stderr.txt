@@ -1,0 +1,6 @@
+test_repeatable_and_labelled (__main__.Fixtures.test_repeatable_and_labelled) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 1.630s
+
+OK
