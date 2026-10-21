@@ -1,0 +1,29 @@
+{
+  "name": "Reference",
+  "purpose": "Pre-harness snapshot; no Live engine",
+  "parent_commit": "388be0d17d69e6dfd24a328931faa2ecb01492c7",
+  "branch": "arena/dc90c04d-xiffects",
+  "sha256": {
+    ".github/workflows/build.yml": "f4ca931bec1f842828795c88a4289942c97cc8cc8ac9861d89fcfc28f3c49f10",
+    ".gitignore": "b8690ef097fb7d4248377bb79c0c57c2aaa00809fc04fa0614a5d40c7f4b6d8f",
+    "AGENTS.md": "b556edc2ec7934baa3fc5b8cebf7127fad4d28d22cc016dd1933d4c5ca2a65e6",
+    "Assets/README.md": "8b6c23508629f7386ae29c1eeac849040e3feafc6c09670a8055f7975cadd29c",
+    "Assets/hero.jpg": "4075e42456f6429672b15d2d5460d2b1147ec57db4fc7c8eeba6984d104b3248",
+    "CMakeLists.txt": "3365ab2bdf2cc9d2e138e2f07f14130cd771df69b345a20b83672c6126953848",
+    "README.md": "587bdc7c3e1cbbb6f7bdbcff3a0a91c4a0240303d2e8d2678561fc4f65cb0ed0",
+    "Source/DSP/Effects.h": "5ace991a3ba9d93855c6915c3895adeefa6b3ce4e4d6affe3214815492937a72",
+    "Source/DSP/Pitch.h": "589d61f11035456845526be6bbcabc0c1ab718ed8c072681cea20a95f78704cf",
+    "Source/PluginEditor.cpp": "d4807414f5967800453705ec466eb18cf5fbd751d9b8b6c2c9c8e890eae36123",
+    "Source/PluginEditor.h": "f41fa1c1f485bde16668032bb741c66e866d12baaf3eea3997a3e75a28d2bdcd",
+    "Source/PluginProcessor.cpp": "bb44864ec10a3254cc3d9934e8028249cbe13e2329b57527b89f89a176b0e01f",
+    "Source/PluginProcessor.h": "a0ea5887c716934245cbdecf1582a592f49b7dbc01cd50398ee5b4cfcfba8809",
+    "Source/Telemetry.h": "696f5275ae0f071dd7760ab7f446e8bc275247b67b2733f7044cb020059d62bf",
+    "Source/UI/Controls.h": "f50f7ad02c6a47016ce228d1b61dcf9c62a60d9e57d9bdb7fe562463a4aa5528",
+    "Tests/CorrectionRegressionTests.cpp": "db388378a4eba3ddd5f7c92bc2e66a39d6b2568baf52da9afcba4c55795e16ea",
+    "Tests/DSPTests.cpp": "c24c515777c07a67596672d8da4c1478c2e3a049934321429962c330e52eda7d",
+    "Tests/HostTests.cpp": "fbde154f9dec751750fede9053b65e07e31d08f9fda14e6c6dd8855b6dfb3dac",
+    "Tests/PitchTests.cpp": "b23437e9f44aeb6ab22cddb6739ba3614584dd1d8db4bd2af7011a89ddd949a3",
+    "Tests/RealtimeTests.cpp": "aa88c298f6f5a27d633354237b7e45a326b123b13f356c1ff303b6a72211ae13",
+    "Tools/PitchProfile.cpp": "2b361f2d3067900b6a1c70fdff1d197de0d39844e96eae06cfa086194bfe154a"
+  }
+}
