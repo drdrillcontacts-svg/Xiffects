@@ -1,0 +1,16 @@
+name: Build Xiffects
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure
+        run: cmake -S . -B build -A x64
+      - name: Build VST3 and Standalone
+        run: cmake --build build --config Release --parallel 2
