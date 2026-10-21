@@ -1,0 +1,39 @@
+name: Review Windows Reference Evidence
+on:
+  push:
+    paths:
+      - '.github/workflows/reference-evidence-review.yml'
+      - 'Tools/ReviewReferenceEvidence.py'
+      - 'Tests/ReferenceAnalysisTests.py'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  review:
+    runs-on: windows-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/download-artifact@v4
+        with:
+          name: Reference-Windows-Evidence
+          path: downloaded
+          run-id: 39678399287
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Verify analyser and recompute saved product WAV measurements
+        run: |
+          python -m pip install numpy==2.2.6
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python Tests/ReferenceAnalysisTests.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python Tools/ReviewReferenceEvidence.py downloaded reviewed
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Reference-Reviewed-Metrics
+          path: reviewed/
+          if-no-files-found: error
