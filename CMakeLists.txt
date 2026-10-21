@@ -1,0 +1,48 @@
+cmake_minimum_required(VERSION 3.22)
+project(Xiffects VERSION 0.1.0)
+
+include(FetchContent)
+FetchContent_Declare(
+    JUCE
+    GIT_REPOSITORY https://github.com/juce-framework/JUCE.git
+    GIT_TAG 8.0.6
+    GIT_SHALLOW TRUE
+)
+FetchContent_MakeAvailable(JUCE)
+
+juce_add_plugin(Xiffects
+    COMPANY_NAME "Xivan"
+    BUNDLE_ID "com.xivan.xiffects"
+    PLUGIN_MANUFACTURER_CODE Xiva
+    PLUGIN_CODE Xifx
+    FORMATS VST3 Standalone
+    PRODUCT_NAME "Xiffects"
+    DESCRIPTION "Soprano Saxophone Multi-Effect"
+    IS_SYNTH FALSE
+    NEEDS_MIDI_INPUT FALSE
+    NEEDS_MIDI_OUTPUT FALSE
+    IS_MIDI_EFFECT FALSE
+    EDITOR_WANTS_KEYBOARD_FOCUS TRUE
+    COPY_PLUGIN_AFTER_BUILD FALSE
+)
+
+juce_generate_juce_header(Xiffects)
+target_sources(Xiffects PRIVATE
+    Source/PluginProcessor.cpp
+    Source/PluginEditor.cpp
+)
+target_compile_features(Xiffects PUBLIC cxx_std_17)
+target_compile_definitions(Xiffects PUBLIC
+    JUCE_WEB_BROWSER=0
+    JUCE_USE_CURL=0
+    JUCE_VST3_CAN_REPLACE_VST2=0
+)
+target_link_libraries(Xiffects PRIVATE
+    juce::juce_audio_utils
+    juce::juce_audio_processors
+    juce::juce_dsp
+    PUBLIC
+    juce::juce_recommended_config_flags
+    juce::juce_recommended_lto_flags
+    juce::juce_recommended_warning_flags
+)
