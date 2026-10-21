@@ -1,4 +1,5 @@
 #include "PluginEditor.h"
+#include <BinaryData.h>
 
 namespace
 {
@@ -26,7 +27,12 @@ namespace
 XiffectsAudioProcessorEditor::XiffectsAudioProcessorEditor (XiffectsAudioProcessor& p)
     : AudioProcessorEditor (&p), processor (p)
 {
+    hero = juce::ImageCache::getFromMemory(BinaryData::hero_jpg, BinaryData::hero_jpgSize);
+    setResizable(true, true);
+    setResizeLimits(1152, 720, 1920, 1200);
+    if (auto* constrainer = getConstrainer()) constrainer->setFixedAspectRatio(1.6);
     setSize (1440, 900);
+    startTimerHz(24);
     brand.setText ("Xiffects", juce::dontSendNotification);
     brand.setFont (juce::Font (42.0f, juce::Font::plain));
     brand.setColour (juce::Label::textColourId, white);
@@ -45,6 +51,22 @@ XiffectsAudioProcessorEditor::XiffectsAudioProcessorEditor (XiffectsAudioProcess
     presetBox.addItem ("Soprano Warmth", 2);
     presetBox.addItem ("Red Lead", 3);
     presetBox.addItem ("Wide & Airy", 4);
+    presetBox.setSelectedId(1, juce::dontSendNotification);
+    presetBox.onChange = [this] {
+        auto set = [this](const char* id, float value) {
+            auto* parameter = processor.parameters.getParameter(id);
+            parameter->beginChangeGesture();
+            parameter->setValueNotifyingHost(parameter->convertTo0to1(value));
+            parameter->endChangeGesture();
+        };
+        // Factory recipes change only implemented effects, preserving manual note choices.
+        for (auto id : {"COMP_ON","REV_ON","DLY_ON","DIST_ON","EQ_ON","PHASER_ON"}) set(id,0);
+        const int preset = presetBox.getSelectedId();
+        if (preset > 1) { set("COMP_ON",1); set("COMP_THRESHOLD",-18); set("COMP_RATIO",3); set("COMP_MAKEUP",2); }
+        if (preset == 2) { set("EQ_ON",1); set("EQ_LOW",2); set("EQ_MID",0); set("EQ_HIGH",-2); set("EQ_AIR",0); }
+        if (preset == 3) { set("DIST_ON",1); set("DIST_DRIVE",24); set("DIST_MIX",25); set("DLY_ON",1); set("DLY_MIX",20); }
+        if (preset == 4) { set("REV_ON",1); set("REV_MIX",30); set("REV_DECAY",3); set("PHASER_ON",1); }
+    };
     styleCombo (presetBox);
     addAndMakeVisible (presetBox);
 
@@ -81,11 +103,8 @@ XiffectsAudioProcessorEditor::XiffectsAudioProcessorEditor (XiffectsAudioProcess
         m->bypass.setColour (juce::TextButton::textColourOffId, red);
         m->bypass.setColour (juce::TextButton::textColourOnId, white);
         addAndMakeVisible (m->bypass);
-        auto* raw = m.get();
-        m->bypass.onClick = [this, raw, id = enabledIds[(size_t)i]] {
-            if (auto* v = processor.parameters.getParameter (id))
-                v->setValueNotifyingHost (raw->bypass.getToggleState() ? 1.0f : 0.0f);
-        };
+        m->bypassAttachment = std::make_unique<XiffectsAudioProcessor::APVTS::ButtonAttachment>(
+            processor.parameters, enabledIds[(size_t)i], m->bypass);
         for (int j = 0; j < m->parameterIds.size(); ++j)
         {
             auto s = std::make_unique<juce::Slider>();
@@ -146,107 +165,87 @@ XiffectsAudioProcessorEditor::XiffectsAudioProcessorEditor (XiffectsAudioProcess
     powerButton.setColour (juce::TextButton::buttonColourId, panel);
     powerButton.setColour (juce::TextButton::textColourOffId, red);
     addAndMakeVisible (powerButton);
+    powerButton.setButtonText("ON");
+    powerButton.setClickingTogglesState(true);
+    powerAttachment = std::make_unique<XiffectsAudioProcessor::APVTS::ButtonAttachment>(processor.parameters,"POWER",powerButton);
+    styleSlider(outputSlider);
+    outputSlider.setSliderStyle(juce::Slider::LinearHorizontal);
+    outputSlider.setTextValueSuffix(" dB");
+    addAndMakeVisible(outputSlider);
+    outputAttachment=std::make_unique<Attachment>(processor.parameters,"OUTPUT",outputSlider);
+    for(size_t i : {size_t(0),size_t(6),size_t(8)}) {
+        modules[i]->bypass.setEnabled(false);
+        modules[i]->bypass.setTooltip("DSP pending: this module is not yet available");
+        modules[i]->titleLabel.setText(modules[i]->title + " *",juce::dontSendNotification);
+        for(auto& slider:modules[i]->sliders) slider->setEnabled(false);
+    }
+    tuneStrength.setEnabled(false); tuneSpeed.setEnabled(false);
+    resized();
 }
 
 void XiffectsAudioProcessorEditor::paint (juce::Graphics& g)
 {
-    g.fillAll (bg);
-    auto bounds = getLocalBounds().toFloat();
-    g.setColour (juce::Colour (0xff202126));
-    g.drawRoundedRectangle (bounds.reduced (12.0f), 15.0f, 1.0f);
-    g.setColour (juce::Colour (0xff191a1f));
-    g.fillRoundedRectangle (juce::Rectangle<float>(22, 105, getWidth()-44, 300), 12.0f);
-    g.setColour (juce::Colour (0xff260b12));
-    g.fillEllipse (getWidth()*0.39f, 118.0f, 310.0f, 270.0f);
-    g.setColour (red.withAlpha (0.25f));
-    g.drawEllipse (getWidth()*0.39f, 118.0f, 310.0f, 270.0f, 2.0f);
-    g.setColour (juce::Colour (0xff25262c));
-    g.drawLine (26.0f, 96.0f, getWidth()-26.0f, 96.0f, 1.0f);
-
-    // Custom abstract sax silhouette / sound-wave hero art. Replace with licensed portrait artwork later.
-    g.setColour (juce::Colour (0xff07080a).withAlpha (0.85f));
-    juce::Path silhouette;
-    silhouette.startNewSubPath (getWidth()*0.48f, 155.0f);
-    silhouette.cubicTo (getWidth()*0.43f, 165.0f, getWidth()*0.44f, 205.0f, getWidth()*0.42f, 240.0f);
-    silhouette.cubicTo (getWidth()*0.40f, 265.0f, getWidth()*0.43f, 290.0f, getWidth()*0.45f, 315.0f);
-    silhouette.lineTo (getWidth()*0.57f, 315.0f);
-    silhouette.cubicTo (getWidth()*0.59f, 270.0f, getWidth()*0.58f, 220.0f, getWidth()*0.54f, 175.0f);
-    silhouette.closeSubPath();
-    g.fillPath (silhouette);
-    g.setColour (red.withAlpha (0.7f));
-    for (int i = 0; i < 5; ++i)
-    {
-        juce::Path wave;
-        wave.startNewSubPath (40.0f, 300.0f + i*8.0f);
-        wave.cubicTo (240.0f, 245.0f-i*8.0f, 340.0f, 365.0f+i*3.0f, 520.0f, 300.0f);
-        wave.cubicTo (760.0f, 235.0f+i*4.0f, 890.0f, 365.0f-i*5.0f, 1110.0f, 295.0f+i*7.0f);
-        g.strokePath (wave, juce::PathStrokeType (1.0f));
+    g.fillAll(bg);
+    g.addTransform(juce::AffineTransform::scale(float(getWidth())/1440.0f, float(getHeight())/900.0f));
+    g.setGradientFill(juce::ColourGradient(juce::Colour(0xff27282b),0,0, bg,0,100,false));
+    g.fillRect(0,0,1440,100);
+    g.drawImage(hero,juce::Rectangle<float>(0,100,1440,302));
+    const float moduleW=1396.0f/9;
+    for(int i=0;i<9;++i) {
+        juce::Rectangle<float> rect(22+float(i)*moduleW,402,moduleW-2,322);
+        g.setGradientFill(juce::ColourGradient(panel,rect.getX(),402,juce::Colour(0xff0c0d10),rect.getX(),724,false));
+        g.fillRoundedRectangle(rect,5);
+        g.setColour(juce::Colour(0xff45464b)); g.drawRoundedRectangle(rect,5,1);
+        g.setColour(red);
+        const float cx=rect.getCentreX();
+        for(int j=0;j<5;++j) g.drawVerticalLine(int(cx)+j*5-10,420.0f+float(std::abs(j-2)*4),446.0f-float(std::abs(j-2)*4));
     }
-    g.setColour (red);
-    g.setFont (juce::Font (46.0f, juce::Font::italic));
-    g.drawText ("Xiffects", 70, 170, 420, 75, juce::Justification::left);
-    g.setColour (soft);
-    g.setFont (juce::Font (10.0f));
-    g.drawText ("SHAPE THE SOUND OF YOUR SAX", 76, 245, 350, 22, juce::Justification::left);
-    g.setColour (panel);
-    g.fillRoundedRectangle (juce::Rectangle<float>(22, 420, getWidth()-44, 380), 12.0f);
-    g.setColour (juce::Colour (0xff303137));
-    g.drawRoundedRectangle (juce::Rectangle<float>(22, 420, getWidth()-44, 380), 12.0f, 1.0f);
-    g.setColour (juce::Colour (0xff202126));
-    g.fillRoundedRectangle (juce::Rectangle<float>(22, 812, getWidth()-44, 70), 10.0f);
-    g.setColour (red.withAlpha (0.8f));
-    g.drawLine (35, 812, getWidth()-35, 812, 1.0f);
-    g.setColour (soft);
-    g.setFont (juce::Font (10.0f));
-    g.drawText ("SOPRANO SAX", 48, 838, 150, 18, juce::Justification::left);
-    g.drawText ("INPUT  -6.0 dB", 240, 838, 150, 18, juce::Justification::left);
-    g.drawText ("OUTPUT  -6.0 dB", getWidth()-220, 838, 160, 18, juce::Justification::right);
-    g.setColour (red);
-    for (int i = 0; i < 44; ++i)
-    {
-        float h = 4.0f + (float)((i * 17 + 13) % 23);
-        g.fillRoundedRectangle (400.0f + i*9.0f, 847.0f-h/2.0f, 3.0f, h, 1.5f);
-    }
+    g.setColour(panel); g.fillRoundedRectangle(22,736,1396,144,10);
+    g.setColour(juce::Colour(0xff45464b));g.drawRoundedRectangle(22,736,1396,144,10,1);
+    g.setColour(soft);g.setFont(juce::Font(11.0f));
+    g.drawText("* OCTAVER / PITCH / CORRECTION DSP PENDING",900,750,490,20,juce::Justification::centredRight);
+    g.drawText("NOTE MAP: SCALE INTERSECTED WITH MANUAL NOTES",310,755,550,20,juce::Justification::left);
+    g.drawText("OUTPUT",1020,54,70,18,juce::Justification::left);
+    auto meter=[&](int x,float peak,const juce::String& title) {
+        g.setColour(soft);g.drawText(title,x,851,35,16,juce::Justification::left);
+        g.setColour(juce::Colour(0xff37383d));g.fillRect(x+38,856,130,5);
+        const float normalized=juce::jlimit(0.0f,1.0f,(juce::Decibels::gainToDecibels(peak,-60.0f)+60)/60);
+        g.setColour(peak>=1?juce::Colours::orange:red);g.fillRect(x+38,856,int(130*normalized),5);
+    };
+    meter(920,processor.inputPeak.load(),"IN"); meter(1140,processor.outputPeak.load(),"OUT");
 }
 
 void XiffectsAudioProcessorEditor::resized()
 {
-    auto area = getLocalBounds();
-    brand.setBounds (60, 22, 260, 52);
-    byline.setBounds (330, 36, 230, 24);
-    saxLabel.setBounds (570, 36, 280, 24);
-    presetBox.setBounds (area.getWidth()-365, 28, 210, 34);
-    powerButton.setBounds (area.getWidth()-105, 28, 42, 34);
-
-    const int moduleY = 430, moduleH = 365;
-    const int left = 28, totalW = getWidth()-56, moduleW = totalW/9;
-    for (int i = 0; i < (int)modules.size(); ++i)
-    {
-        auto& m = *modules[(size_t)i];
-        const int x = left + i*moduleW;
-        m.titleLabel.setBounds (x+4, moduleY+30, moduleW-38, 28);
-        m.bypass.setBounds (x+moduleW-31, moduleY+8, 22, 22);
-        for (int j = 0; j < (int)m.sliders.size(); ++j)
-        {
-            const int count = (int)m.sliders.size();
-            const int cellW = (moduleW-12) / count;
-            const int sx = x + 6 + j*cellW;
-            m.captions[(size_t)j]->setBounds (sx, moduleY+70, cellW, 20);
-            m.sliders[(size_t)j]->setBounds (sx, moduleY+95, cellW, count == 4 ? 125 : 140);
+    brand.setBounds(48,20,230,50);
+    byline.setBounds(290,30,230,30);
+    saxLabel.setBounds(565,30,300,30);
+    presetBox.setBounds(1000,20,220,30);
+    powerButton.setBounds(1330,25,55,35);
+    outputSlider.setBounds(1090,52,215,38);
+    const int left=22, moduleW=1396/9;
+    for(int i=0;i<int(modules.size());++i) {
+        auto& m=*modules[size_t(i)]; const int x=left+i*moduleW;
+        m.titleLabel.setBounds(x+4,451,moduleW-8,25);
+        m.bypass.setBounds(x+moduleW-26,410,20,20);
+        const int count=int(m.sliders.size());
+        for(int j=0;j<count;++j) {
+            if(j==0) {
+                m.sliders[size_t(j)]->setBounds(x+24,478,moduleW-48,120);
+                m.captions[size_t(j)]->setBounds(x+4,599,moduleW-8,18);
+            } else {
+                const int cell=(moduleW-12)/(count-1), sx=x+6+(j-1)*cell;
+                m.sliders[size_t(j)]->setBounds(sx,625,cell,72);
+                m.captions[size_t(j)]->setBounds(sx,699,cell,18);
+            }
         }
-        // Title is painted in the component background area.
     }
-
-    tuneTitle.setBounds (45, 816, 210, 25);
-    keyLabel.setBounds (55, 845, 45, 16);
-    keyBox.setBounds (55, 862, 90, 24);
-    scaleLabel.setBounds (158, 845, 55, 16);
-    scaleBox.setBounds (158, 862, 125, 24);
-    const int noteX = 310, noteY = 852, noteW = 42;
-    for (int i = 0; i < 12; ++i)
-        noteButtons[(size_t)i].setBounds (noteX+i*noteW, noteY, noteW, 28);
-    strengthLabel.setBounds (850, 832, 145, 18);
-    tuneStrength.setBounds (980, 822, 110, 55);
-    speedLabel.setBounds (1110, 832, 100, 18);
-    tuneSpeed.setBounds (1200, 822, 110, 55);
+    tuneTitle.setBounds(42,749,250,25);
+    keyLabel.setBounds(42,789,50,18); scaleLabel.setBounds(150,789,70,18);
+    keyBox.setBounds(42,811,90,28); scaleBox.setBounds(150,811,135,28);
+    for(int i=0;i<12;++i) noteButtons[size_t(i)].setBounds(310+i*45,793,45,48);
+    strengthLabel.setBounds(900,784,150,20); tuneStrength.setBounds(1045,780,80,65);
+    speedLabel.setBounds(1150,784,100,20); tuneSpeed.setBounds(1255,780,80,65);
+    const auto transform=juce::AffineTransform::scale(float(getWidth())/1440.0f,float(getHeight())/900.0f);
+    for(int i=0;i<getNumChildComponents();++i) getChildComponent(i)->setTransform(transform);
 }

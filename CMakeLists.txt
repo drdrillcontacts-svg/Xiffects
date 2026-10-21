@@ -1,6 +1,18 @@
 cmake_minimum_required(VERSION 3.22)
 project(Xiffects VERSION 0.1.0)
 
+include(CTest)
+option(XIFFECTS_DSP_ONLY "Build portable DSP tests without JUCE/system GUI dependencies" OFF)
+if(BUILD_TESTING)
+    add_executable(XiffectsDSPTests Tests/DSPTests.cpp)
+    target_include_directories(XiffectsDSPTests PRIVATE Source)
+    target_compile_features(XiffectsDSPTests PRIVATE cxx_std_17)
+    add_test(NAME DSP COMMAND XiffectsDSPTests)
+endif()
+if(XIFFECTS_DSP_ONLY)
+    return()
+endif()
+
 include(FetchContent)
 FetchContent_Declare(
     JUCE
@@ -26,6 +38,7 @@ juce_add_plugin(Xiffects
     COPY_PLUGIN_AFTER_BUILD FALSE
 )
 
+juce_add_binary_data(XiffectsAssets SOURCES Assets/hero.jpg)
 juce_generate_juce_header(Xiffects)
 target_sources(Xiffects PRIVATE
     Source/PluginProcessor.cpp
@@ -38,6 +51,7 @@ target_compile_definitions(Xiffects PUBLIC
     JUCE_VST3_CAN_REPLACE_VST2=0
 )
 target_link_libraries(Xiffects PRIVATE
+    XiffectsAssets
     juce::juce_audio_utils
     juce::juce_audio_processors
     juce::juce_dsp

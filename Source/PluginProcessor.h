@@ -1,5 +1,6 @@
 #pragma once
 #include <JuceHeader.h>
+#include "DSP/Effects.h"
 
 class XiffectsAudioProcessor final : public juce::AudioProcessor
 {
@@ -19,7 +20,7 @@ public:
     bool acceptsMidi() const override { return false; }
     bool producesMidi() const override { return false; }
     bool isMidiEffect() const override { return false; }
-    double getTailLengthSeconds() const override { return 4.0; }
+    double getTailLengthSeconds() const override { return 300.0; }
 
     int getNumPrograms() override { return 1; }
     int getCurrentProgram() override { return 0; }
@@ -30,11 +31,24 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
+    std::atomic<float> inputPeak {0}, outputPeak {0};
+
     using APVTS = juce::AudioProcessorValueTreeState;
     APVTS parameters;
     static APVTS::ParameterLayout createParameterLayout();
 
 private:
-    juce::AudioBuffer<float> dryBuffer;
+    enum Control { compOn, revOn, delayOn, distOn, eqOn, phaserOn,
+        threshold, ratio, makeup, revMix, revSize, decay, delayMix, delayTime,
+        feedback, drive, tone, distMix, low, mid, high, air, rate, depth,
+        phaserFeedback, output, power, controlCount };
+    std::array<std::atomic<float>*, controlCount> values{};
+    std::array<xiffects::Smoother, controlCount> smooth;
+    xiffects::Compressor compressor;
+    xiffects::Delay delay;
+    xiffects::Distortion distortion;
+    xiffects::Equalizer equalizer;
+    xiffects::Phaser phaser;
+    xiffects::Reverb reverb;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (XiffectsAudioProcessor)
 };
