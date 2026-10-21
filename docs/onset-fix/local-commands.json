@@ -1,0 +1,23 @@
+{
+  "baseline_reproducer": {
+    "command": "g++ -O2 -std=c++17 -I build-onset/baseline Tests/OnsetTests.cpp -o build-onset/before && build-onset/before --baseline",
+    "baseline_header": "26e8bb3:Source/DSP/Pitch.h (verified identical to fetched pre-fix header)",
+    "expected_exit": 1,
+    "observed_exit": 1,
+    "measurement": "synthetic component chain; reference bug reproduction"
+  },
+  "candidate_tests": {
+    "command": "cmake -S . -B build-onset-tests -DXIFFECTS_DSP_ONLY=ON -DCMAKE_BUILD_TYPE=Release; cmake --build build-onset-tests --parallel 2; ctest --test-dir build-onset-tests -V",
+    "passed": 5,
+    "failed": 0
+  },
+  "sanitizers": {
+    "tests": [
+      "OnsetTests",
+      "CorrectionRegressionTests"
+    ],
+    "flags": "-O1 -g -std=c++17 -fsanitize=address,undefined",
+    "status": "PASS"
+  },
+  "hardware_latency_measured": false
+}
