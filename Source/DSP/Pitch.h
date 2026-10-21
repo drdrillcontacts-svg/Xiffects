@@ -128,7 +128,7 @@ public:
             // 15-cent hysteresis, but never retain an excluded target.
             if(lastTarget>-999 && allowed(int(lastTarget),key,scale,notes)
                && std::abs(detected-lastTarget)<std::abs(detected-next)+0.15f) next=lastTarget;
-            lastTarget=next;
+            lastTarget=std::abs(next-std::round(next))<1.e-4f?next:-1000;
             desired=std::clamp(next-detected,-12.f,12.f)*std::clamp(strength,0.f,1.f);
         } else lastTarget=-1000;
         const float coefficient=std::exp(-1/(rate*std::max(milliseconds,1.f)*0.001f));

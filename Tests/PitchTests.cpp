@@ -71,6 +71,20 @@ int main() {
             ratio=correction.process(0.2f*std::sin(2*pi*inputHz*float(i)/float(sr)),0,0,notes,1,12);
         require(std::abs(ratio-1)<1.e-4f,"Empty mask returns unity");
         notes.fill(true);
+        // End-to-end: correction ratio must produce an A4 fundamental in audio,
+        // not merely change the displayed note or a control value.
+        correction.prepare(sr); shifter.prepare(sr); std::vector<float> tuned;
+        for(int i=0;i<int(sr*0.7);++i) {
+            const float x=0.2f*std::sin(2*pi*inputHz*float(i)/float(sr));
+            ratio=correction.process(x,0,0,notes,1,12);
+            const auto out=shifter.process({x,x},ratio,1,correction.detector.frequency);
+            if(i>int(sr*0.45)) tuned.push_back(out[0]);
+        }
+        require(std::abs(1200*std::log2(dominant(tuned,float(sr),440)/440))<10,"Corrected audio fundamental");
+        // At zero strength, even a valid target may not alter pitch.
+        for(int i=0;i<int(sr*0.4);++i)
+            ratio=correction.process(0.2f*std::sin(2*pi*inputHz*float(i)/float(sr)),0,0,notes,0,12);
+        require(std::abs(ratio-1)<1.e-4f,"Zero correction strength is unity");
     }
     std::cout<<"Pitch detection, shift, correction and latency tests passed\n";
 }

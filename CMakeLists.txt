@@ -12,6 +12,12 @@ if(BUILD_TESTING)
     target_include_directories(XiffectsPitchTests PRIVATE Source)
     target_compile_features(XiffectsPitchTests PRIVATE cxx_std_17)
     add_test(NAME Pitch COMMAND XiffectsPitchTests)
+    find_package(Threads REQUIRED)
+    add_executable(XiffectsRealtimeTests Tests/RealtimeTests.cpp)
+    target_include_directories(XiffectsRealtimeTests PRIVATE Source)
+    target_compile_features(XiffectsRealtimeTests PRIVATE cxx_std_17)
+    target_link_libraries(XiffectsRealtimeTests PRIVATE Threads::Threads)
+    add_test(NAME Realtime COMMAND XiffectsRealtimeTests)
 endif()
 if(XIFFECTS_DSP_ONLY)
     return()
@@ -64,3 +70,14 @@ target_link_libraries(Xiffects PRIVATE
     juce::juce_recommended_lto_flags
     juce::juce_recommended_warning_flags
 )
+
+if(BUILD_TESTING)
+    add_executable(XiffectsHostTests Tests/HostTests.cpp)
+    target_compile_features(XiffectsHostTests PRIVATE cxx_std_17)
+    target_include_directories(XiffectsHostTests PRIVATE Source
+        $<TARGET_PROPERTY:Xiffects,INCLUDE_DIRECTORIES>)
+    target_compile_definitions(XiffectsHostTests PRIVATE
+        $<TARGET_PROPERTY:Xiffects,COMPILE_DEFINITIONS>)
+    target_link_libraries(XiffectsHostTests PRIVATE Xiffects)
+    add_test(NAME Host COMMAND XiffectsHostTests)
+endif()
