@@ -34,10 +34,16 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           python Tests/ReferenceAnalysisTests.py
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Recompute Live saved WAVs
+        run: |
           python Tools/ReviewReferenceEvidence.py live reviewed-live
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Recompute Studio saved WAVs
+        run: |
           python Tools/ReviewReferenceEvidence.py studio reviewed-studio
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Compare identical inputs and parameters
+        run: |
           python Tools/CompareLiveEvidence.py studio live
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - uses: actions/upload-artifact@v4
