@@ -14,6 +14,8 @@ jobs:
     runs-on: windows-latest
     timeout-minutes: 35
     steps:
+      - name: Preserve exact Reference bytes on checkout
+        run: git config --global core.autocrlf false
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -27,7 +29,9 @@ jobs:
           expected=json.loads(pathlib.Path('docs/reference/baseline-files.json').read_text())['sha256']
           for name,digest in expected.items():
             if name.startswith(('Source/','Assets/')):
-              assert hashlib.sha256(pathlib.Path(name).read_bytes()).hexdigest()==digest,name
+              actual=hashlib.sha256(pathlib.Path(name).read_bytes()).hexdigest()
+              if actual!=digest: print('::error title=Reference integrity::'+name+' expected='+digest+' actual='+actual)
+              assert actual==digest,name
           subprocess.run(['git','diff','--exit-code','26e8bb3','--','Source','Assets'],check=True)
           pathlib.Path('evidence').mkdir()
           pathlib.Path('evidence/environment.txt').write_text(subprocess.check_output(['systeminfo'],text=True))
