@@ -1,0 +1,12 @@
+8: LIVE rate=44100 channels=1 bypass=0 measured_samples=531 ms=12.0408
+8: LIVE rate=44100 channels=1 bypass=1 measured_samples=531 ms=12.0408
+8: LIVE rate=44100 channels=2 bypass=0 measured_samples=531 ms=12.0408
+8: LIVE rate=44100 channels=2 bypass=1 measured_samples=531 ms=12.0408
+8: LIVE rate=48000 channels=1 bypass=0 measured_samples=578 ms=12.0417
+8: LIVE rate=48000 channels=1 bypass=1 measured_samples=578 ms=12.0417
+8: LIVE rate=48000 channels=2 bypass=0 measured_samples=578 ms=12.0417
+8: LIVE rate=48000 channels=2 bypass=1 measured_samples=578 ms=12.0417
+8: LIVE rate=96000 channels=1 bypass=0 measured_samples=1154 ms=12.0208
+8: LIVE rate=96000 channels=1 bypass=1 measured_samples=1154 ms=12.0208
+8: LIVE rate=96000 channels=2 bypass=0 measured_samples=1154 ms=12.0208
+8: LIVE rate=96000 channels=2 bypass=1 measured_samples=1154 ms=12.0208

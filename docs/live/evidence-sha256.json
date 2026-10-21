@@ -1,0 +1,19 @@
+{
+  "README.md": "be976e421eac9c4c2d1c21062742093e3fa28ac897ac5ff7c12fc141206a50d1",
+  "local-environment.txt": "3607cec41ae46f42cfe9af3ef36dc0eed2036c27cca8fe0338f9d1543beb874b",
+  "portable-tests.txt": "b2278e169886905bebc54f0c47ab306c13673fba614f0940464223eecdc7261c",
+  "production-hashes.json": "fc1d338e1fcafed5304736e2362a3d701dd68788bcfc0a51853754e39ab9cdf8",
+  "review-annotations.json": "0d982be68095d6f44d024a0b5a35a1f53c7b04192c474b6fdd4eae1d5c0f72d7",
+  "review-run.json": "6dfe68e7cea9c05709029c5a485e2e7977c3385b1418a3c5c0c1b1fd48f26adf",
+  "reviewed-metrics.json": "46f5f69ad09b85442935bd673e9a71147218ef396c4727395f8a24a2105d19fb",
+  "same-input-comparison.json": "677a4d3c6f8c8a19dbf2e996cf436f7a83329c33d58666d77114750afd60baf5",
+  "sanitized.txt": "43182bf7637282f5fe3159720d3466ddf0079a470a880b9999099a8cb555760b",
+  "studio-equivalence.cpp": "4f29cd67146c214e45cb8f5ae82754c7308bba9ab1a94d18ace82e38e982525a",
+  "studio-shifter-equivalence.txt": "511812d49be615f16820817f9eab63a110431a9f7e25f8d6d397e64c5efd58ab",
+  "studio-windows-run.json": "3db3ee092b2fd47db3c8406e148f0797dbd162ca49420b30eddb7013a62c9a82",
+  "windows-annotations.json": "a8056ce45411c13b3bdc2b0f61b66d631146a98dd256f9e67ad890f537bb1494",
+  "windows-artifacts.json": "0e23cff4d967dd361a83794fef8b78878e2c459deb414d3040df4b50188e5222",
+  "windows-impulse-results.txt": "426d96f417b1d11582161be71ba4af322957224a1c4e3b08ea42fe0a71729e88",
+  "windows-onset-results.json": "e2cc1dfb9e658cdf0b8e896d8b09dc34135506cf33e6e7c154f904f5a37df594",
+  "windows-run.json": "560d420625b5f79b26a2c6b99395fe06bec14772ab151c6013bb294327f72e58"
+}

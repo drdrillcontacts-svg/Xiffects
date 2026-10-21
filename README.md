@@ -4,6 +4,21 @@ Native C++17 / JUCE 8.0.6 soprano saxophone multi-effect, VST3 and Standalone.
 This is a working implementation in development, **not an acoustically validated
 commercial release**. No web view or full-interface screenshot is used as UI.
 
+## Low-latency Live candidate (Windows)
+
+A separate **Xiffects Live** VST3/Standalone now removes the serial pitch-buffer
+stage. Actual processor impulse tests measure approximately **12.04 ms nominal
+software transit** at 48 kHz versus Studio's ~60.08 ms. This is **not hardware
+input-to-output latency**, nor a claim of identical wet-grain transient timing.
+Windows build, seven CTests, 48 synthetic processor renders and pluginval level 5
+passed for `557416f`. Studio remains separate and its Windows build/tests also passed.
+
+[Download Live experimental Windows artifact](https://github.com/drdrillcontacts-svg/Xiffects/actions/runs/39690697623/artifacts/12388239303)
+(GitHub sign-in may be required). See [measurements, tradeoffs and installation](docs/live/README.md).
+Short grains may affect tone; physical ASIO/DAW/live-input and voice/sax listening
+validation remain outstanding. Build explicitly with `-DXIFFECTS_BUILD_LIVE=ON`.
+The original chain and latency description below refer to **Studio**, not Live.
+
 ## Verified build
 
 Windows VST3 and Standalone builds, DSP/Pitch/Realtime tests and the JUCE host/editor
