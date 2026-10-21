@@ -48,31 +48,10 @@ XiffectsAudioProcessorEditor::XiffectsAudioProcessorEditor (XiffectsAudioProcess
     saxLabel.setColour (juce::Label::textColourId, soft);
     addAndMakeVisible (saxLabel);
 
-    presetBox.addItem ("Default Preset", 1);
-    presetBox.addItem ("Soprano Warmth", 2);
-    presetBox.addItem ("Red Lead", 3);
-    presetBox.addItem ("Wide & Airy", 4);
-    presetBox.setSelectedId(1, juce::dontSendNotification);
-    presetBox.onChange = [this] {
-        auto set = [this](const char* id, float value) {
-            auto* parameter = processor.parameters.getParameter(id);
-            parameter->beginChangeGesture();
-            parameter->setValueNotifyingHost(parameter->convertTo0to1(value));
-            parameter->endChangeGesture();
-        };
-        // Factory recipes change only implemented effects, preserving manual note choices.
-        for (auto id : {"OCT_ON","PITCH_ON","TUNE_ON","COMP_ON","REV_ON","DLY_ON","DIST_ON","EQ_ON","PHASER_ON"}) set(id,0);
-        const int preset = presetBox.getSelectedId();
-        if(preset==1) {
-            for(auto* parameter:processor.getParameters()) {
-                parameter->beginChangeGesture(); parameter->setValueNotifyingHost(parameter->getDefaultValue()); parameter->endChangeGesture();
-            }
-        }
-        if (preset > 1) { set("COMP_ON",1); set("COMP_THRESHOLD",-18); set("COMP_RATIO",3); set("COMP_MAKEUP",2); }
-        if (preset == 2) { set("EQ_ON",1); set("EQ_LOW",2); set("EQ_MID",0); set("EQ_HIGH",-2); set("EQ_AIR",0); }
-        if (preset == 3) { set("DIST_ON",1); set("DIST_DRIVE",24); set("DIST_MIX",25); set("DLY_ON",1); set("DLY_MIX",20); }
-        if (preset == 4) { set("REV_ON",1); set("REV_MIX",30); set("REV_DECAY",3); set("PHASER_ON",1); }
-    };
+    const auto& bank=XiffectsAudioProcessor::factoryPresets();
+    for(int i=0;i<bank.size();++i) presetBox.addItem(bank[i]["category"].toString()+" / "+bank[i]["name"].toString(),i+1);
+    presetBox.setText("Factory presets",juce::dontSendNotification);
+    presetBox.onChange=[this] {processor.loadFactoryPreset(presetBox.getSelectedId()-1);};
     styleCombo (presetBox);
     addAndMakeVisible (presetBox);
 
@@ -152,11 +131,17 @@ XiffectsAudioProcessorEditor::XiffectsAudioProcessorEditor (XiffectsAudioProcess
         addAndMakeVisible (*l);
     }
     keyBox.addItemList (juce::StringArray{"C","C#","D","D#","E","F","F#","G","G#","A","A#","B"}, 1);
-    scaleBox.addItemList (juce::StringArray{"Chromatic","Major","Minor","Harmonic Minor","Melodic Minor","Dorian","Mixolydian","Pentatonic"}, 1);
+    for(size_t i=0;i<xiffects::scales.size();++i) scaleBox.addItem(xiffects::scales[i].name,int(i)+1);
     styleCombo (keyBox); styleCombo (scaleBox);
     addAndMakeVisible (keyBox); addAndMakeVisible (scaleBox);
     keyAttachment = std::make_unique<ComboAttachment> (processor.parameters, "TUNE_KEY", keyBox);
-    scaleAttachment = std::make_unique<ComboAttachment> (processor.parameters, "TUNE_SCALE", scaleBox);
+    scaleBox.setSelectedId(processor.selectedScale()+1,juce::dontSendNotification);
+    scaleBox.onChange=[this] {
+        const int index=scaleBox.getSelectedId()-1;
+        auto set=[this](const char* id,int value) {auto* p=processor.parameters.getParameter(id);p->beginChangeGesture();p->setValueNotifyingHost(p->convertTo0to1(float(value)));p->endChangeGesture();};
+        if(index<8) {set("TUNE_SCALE",index);set("TUNE_SCALE_EXT",0);}
+        else set("TUNE_SCALE_EXT",index-7);
+    };
 
     for (int i = 0; i < 12; ++i)
     {
@@ -315,7 +300,8 @@ void XiffectsAudioProcessorEditor::timerCallback() {
     displayOutput=std::max(processor.outputPeak.load(),displayOutput*0.88f);
     std::array<bool,12> all;all.fill(true);
     const int key=int(processor.parameters.getRawParameterValue("TUNE_KEY")->load());
-    const int scale=int(processor.parameters.getRawParameterValue("TUNE_SCALE")->load());
+    const int scale=processor.selectedScale();
+    scaleBox.setSelectedId(scale+1,juce::dontSendNotification);
     for(size_t i=0;i<noteButtons.size();++i) {
         noteButtons[i].inScale=xiffects::allowed(int(i),key,scale,all);noteButtons[i].repaint();
     }

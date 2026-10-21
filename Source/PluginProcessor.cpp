@@ -1,5 +1,6 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+#include <BinaryData.h>
 
 XiffectsAudioProcessor::XiffectsAudioProcessor()
     : AudioProcessor (BusesProperties()
@@ -7,6 +8,7 @@ XiffectsAudioProcessor::XiffectsAudioProcessor()
         .withOutput ("Output", juce::AudioChannelSet::stereo(), true)),
       parameters (*this, nullptr, "XIFfectsState", createParameterLayout())
 {
+    extendedScale=parameters.getRawParameterValue("TUNE_SCALE_EXT");
     const char* ids[] = {"COMP_ON","REV_ON","DLY_ON","DIST_ON","EQ_ON","PHASER_ON",
         "COMP_THRESHOLD","COMP_RATIO","COMP_MAKEUP","REV_MIX","REV_SIZE","REV_DECAY",
         "DLY_MIX","DLY_TIME","DLY_FEEDBACK","DIST_DRIVE","DIST_TONE","DIST_MIX",
@@ -77,6 +79,9 @@ XiffectsAudioProcessor::APVTS::ParameterLayout XiffectsAudioProcessor::createPar
     layout.add(std::make_unique<juce::AudioParameterChoice>(
         juce::ParameterID{"TUNE_SCALE", 1}, "Auto Tune Scale",
         juce::StringArray{"Chromatic","Major","Minor","Harmonic Minor","Melodic Minor","Dorian","Mixolydian","Pentatonic"}, 1));
+    juce::StringArray extensions {"Use legacy scale"};
+    for(size_t i=8;i<xiffects::scales.size();++i) extensions.add(xiffects::scales[i].name);
+    layout.add(std::make_unique<juce::AudioParameterChoice>(juce::ParameterID{"TUNE_SCALE_EXT",1},"Extended Scale",extensions,0));
     for (int n = 0; n < 12; ++n)
         addBool ((juce::String("TUNE_NOTE_") + juce::String(n)).toRawUTF8(),
                  (juce::String("Allow Note ") + juce::String(n)).toRawUTF8(), true);
@@ -113,6 +118,7 @@ void XiffectsAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
     for(size_t i=0;i<values.size();++i) target[i]=values[i]->load();
     std::array<bool,12> notes{};
     for(size_t i=0;i<notes.size();++i) notes[i]=noteValues[i]->load()>0.5f;
+    const int activeScale=selectedScale();
     float inPeak=0, outPeak=0;
     const int channels=buffer.getNumChannels();
     const auto blend=[](float dry,float wet,float mix) { return dry+(wet-dry)*mix; };
@@ -125,7 +131,7 @@ void XiffectsAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
         }
         bypassPosition=(bypassPosition+1)%bypassDelay[0].size();
         const float peak=std::max(std::abs(x[0]),std::abs(x[1])); inPeak=std::max(inPeak,peak);
-        const float tuningRatio=correction.process(x[0],int(target[tuneKey]),int(target[tuneScale]),
+        const float tuningRatio=correction.process(x[0],int(target[tuneKey]),activeScale,
             notes,v[tuneStrength]*0.01f,v[tuneSpeed]);
         const float fundamental=correction.detector.frequency;
         if(isLiveMode()) {
@@ -191,3 +197,24 @@ void XiffectsAudioProcessor::setStateInformation (const void* data, int sizeInBy
 
 // Required entry point for both VST3 and Standalone wrappers.
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter() { return new XiffectsAudioProcessor(); }
+
+int XiffectsAudioProcessor::selectedScale() const {
+    const int extended=int(extendedScale->load());
+    return extended>0?extended+7:int(values[tuneScale]->load());
+}
+const juce::Array<juce::var>& XiffectsAudioProcessor::factoryPresets() {
+    static const juce::var bank=juce::JSON::parse(juce::String::fromUTF8(BinaryData::factory_presets_json,BinaryData::factory_presets_jsonSize));
+    return *bank["presets"].getArray();
+}
+void XiffectsAudioProcessor::loadFactoryPreset(int index) {
+    const auto& bank=factoryPresets();
+    if(index<0 || index>=bank.size()) return;
+    const auto* valuesObject=bank[index]["parameters"].getDynamicObject();
+    for(const auto& entry:valuesObject->getProperties()) {
+        if(auto* parameter=parameters.getParameter(entry.name.toString())) {
+            parameter->beginChangeGesture();
+            parameter->setValueNotifyingHost(parameter->convertTo0to1(float(entry.value)));
+            parameter->endChangeGesture();
+        }
+    }
+}

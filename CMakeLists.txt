@@ -50,12 +50,17 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(JUCE)
 
+set(XIFFECTS_FORMATS VST3 Standalone)
+if(APPLE)
+    list(APPEND XIFFECTS_FORMATS AU)
+endif()
+
 juce_add_plugin(Xiffects
     COMPANY_NAME "Xivan"
     BUNDLE_ID "com.xivan.xiffects"
     PLUGIN_MANUFACTURER_CODE Xiva
     PLUGIN_CODE Xifx
-    FORMATS VST3 Standalone
+    FORMATS ${XIFFECTS_FORMATS}
     PRODUCT_NAME "Xiffects"
     DESCRIPTION "Soprano Saxophone Multi-Effect"
     IS_SYNTH FALSE
@@ -66,7 +71,7 @@ juce_add_plugin(Xiffects
     COPY_PLUGIN_AFTER_BUILD FALSE
 )
 
-juce_add_binary_data(XiffectsAssets SOURCES Assets/hero.jpg)
+juce_add_binary_data(XiffectsAssets SOURCES Assets/hero.jpg Assets/factory_presets.json)
 juce_generate_juce_header(Xiffects)
 target_sources(Xiffects PRIVATE
     Source/PluginProcessor.cpp
@@ -129,7 +134,7 @@ if(XIFFECTS_BUILD_LIVE)
     juce_add_plugin(XiffectsLive
         COMPANY_NAME "Xivan" BUNDLE_ID "com.xivan.xiffects.live"
         PLUGIN_MANUFACTURER_CODE Xiva PLUGIN_CODE Xifl
-        FORMATS VST3 Standalone PRODUCT_NAME "Xiffects Live"
+        FORMATS ${XIFFECTS_FORMATS} PRODUCT_NAME "Xiffects Live"
         DESCRIPTION "Experimental low-latency soprano saxophone multi-effect"
         IS_SYNTH FALSE NEEDS_MIDI_INPUT FALSE NEEDS_MIDI_OUTPUT FALSE
         IS_MIDI_EFFECT FALSE EDITOR_WANTS_KEYBOARD_FOCUS TRUE COPY_PLUGIN_AFTER_BUILD FALSE)

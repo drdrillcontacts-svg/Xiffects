@@ -1,5 +1,6 @@
 #pragma once
 #include <algorithm>
+#include "Scales.h"
 #include <array>
 #include <cmath>
 #include <vector>
@@ -136,9 +137,8 @@ public:
 };
 // Scale mask AND manual switches. No allowed notes means no correction.
 inline bool allowed(int midi, int key, int scale, const std::array<bool,12>& manual) {
-    static constexpr unsigned masks[] = {0xfff,0xab5,0x5ad,0x9ad,0xaad,0x6ad,0x6b5,0x295};
     const int pc=(midi%12+12)%12, relative=(pc-key+12)%12;
-    return manual[size_t(pc)] && (masks[std::clamp(scale,0,7)] & (1u<<relative)) != 0;
+    return manual[size_t(pc)] && (scales[size_t(std::clamp(scale,0,43))].mask & (1u<<relative)) != 0;
 }
 inline float targetNote(float midi, int key, int scale, const std::array<bool,12>& manual) {
     float target=midi, distance=1000;

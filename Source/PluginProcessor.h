@@ -44,6 +44,9 @@ public:
     using APVTS = juce::AudioProcessorValueTreeState;
     APVTS parameters;
     static APVTS::ParameterLayout createParameterLayout();
+    static const juce::Array<juce::var>& factoryPresets();
+    void loadFactoryPreset(int index);
+    int selectedScale() const;
 
 private:
     enum Control { compOn, revOn, delayOn, distOn, eqOn, phaserOn,
@@ -54,6 +57,7 @@ private:
     std::array<std::atomic<float>*, controlCount> values{};
     std::array<xiffects::Smoother, controlCount> smooth;
     std::array<std::atomic<float>*,12> noteValues{};
+    std::atomic<float>* extendedScale=nullptr;
     xiffects::PitchCorrection correction;
     xiffects::LivePitchBank livePitch;
     xiffects::PitchShifter tuneShifter, octaveShifter, pitchShifter;

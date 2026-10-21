@@ -1,6 +1,8 @@
 #include "PluginProcessor.h"
 #include <iostream>
 #include <stdexcept>
+#include "FactoryBankTests.h"
+
 void check(bool b,const char* s){if(!b)throw std::runtime_error(s);}
 void set(XiffectsAudioProcessor& p,const char* id,float v){auto* a=p.parameters.getParameter(id);a->setValueNotifyingHost(a->convertTo0to1(v));}
 int main(){try {
@@ -34,5 +36,6 @@ int main(){try {
             check(std::abs(r->getValue()-restored.parameters.getParameter(r->paramID)->getValue())<1e-6f,"Live state roundtrip");
         }
     }
+    testFactoryBank();
     return 0;
 } catch(const std::exception& e){std::cerr<<e.what()<<'\n';return 1;}}

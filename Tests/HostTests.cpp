@@ -2,6 +2,8 @@
 #include <cstdlib>
 #include <iostream>
 
+#include "FactoryBankTests.h"
+
 void require(bool result,const char* message) {
     if(!result) {std::cerr<<message<<std::endl;std::exit(1);}
 }
@@ -43,6 +45,7 @@ int main() {
         }
         processor.releaseResources();
     }
+    testFactoryBank();
     XiffectsAudioProcessor processor;
     std::unique_ptr<juce::AudioProcessorEditor> editor(processor.createEditor());
     require(editor!=nullptr && editor->getWidth()==1440,"Native editor creation");
