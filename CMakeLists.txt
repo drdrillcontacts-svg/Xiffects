@@ -91,3 +91,25 @@ if(BUILD_TESTING)
     target_link_libraries(XiffectsHostTests PRIVATE Xiffects)
     add_test(NAME Host COMMAND XiffectsHostTests)
 endif()
+
+# Optional offline harness. Links the same product library, never a DSP copy.
+option(XIFFECTS_BUILD_REFERENCE_TOOLS "Build real-processor offline Reference renderer" OFF)
+if(XIFFECTS_BUILD_REFERENCE_TOOLS)
+    add_executable(XiffectsReferenceRender Tools/ReferenceRender.cpp)
+    target_compile_features(XiffectsReferenceRender PRIVATE cxx_std_17)
+    target_include_directories(XiffectsReferenceRender PRIVATE Source
+        $<TARGET_PROPERTY:Xiffects,INCLUDE_DIRECTORIES>)
+    target_compile_definitions(XiffectsReferenceRender PRIVATE
+        $<TARGET_PROPERTY:Xiffects,COMPILE_DEFINITIONS>)
+    target_link_libraries(XiffectsReferenceRender PRIVATE Xiffects)
+    if(BUILD_TESTING)
+        add_executable(XiffectsReferenceTests Tests/ReferenceTests.cpp)
+        target_compile_features(XiffectsReferenceTests PRIVATE cxx_std_17)
+        target_include_directories(XiffectsReferenceTests PRIVATE Source
+            $<TARGET_PROPERTY:Xiffects,INCLUDE_DIRECTORIES>)
+        target_compile_definitions(XiffectsReferenceTests PRIVATE
+            $<TARGET_PROPERTY:Xiffects,COMPILE_DEFINITIONS>)
+        target_link_libraries(XiffectsReferenceTests PRIVATE Xiffects)
+        add_test(NAME ReferenceProcessor COMMAND XiffectsReferenceTests)
+    endif()
+endif()

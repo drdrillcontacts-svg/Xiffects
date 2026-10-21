@@ -1,0 +1,39 @@
+UpdateCTestConfiguration  from :/home/user/Xiffects/build-reference-portable/DartConfiguration.tcl
+Parse Config file:/home/user/Xiffects/build-reference-portable/DartConfiguration.tcl
+Test project /home/user/Xiffects/build-reference-portable
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 2
+    Start 2: Pitch
+
+2: Test command: /home/user/Xiffects/build-reference-portable/XiffectsPitchTests
+2: Working Directory: /home/user/Xiffects/build-reference-portable
+2: Test timeout computed to be: 1500
+2: 44100 ratio 0.25 measured 109.9 expected 110
+2: 44100 ratio 0.5 measured 219.8 expected 220
+2: 44100 ratio 1.05946 measured 466.194 expected 466.164
+2: 44100 ratio 2 measured 880.2 expected 880
+2: 44100 ratio 4 measured 1759.9 expected 1760
+2: 48000 ratio 0.25 measured 109.9 expected 110
+2: 48000 ratio 0.5 measured 219.8 expected 220
+2: 48000 ratio 1.05946 measured 466.194 expected 466.164
+2: 48000 ratio 2 measured 880.2 expected 880
+2: 48000 ratio 4 measured 1759.9 expected 1760
+2: 96000 ratio 0.25 measured 109.9 expected 110
+2: 96000 ratio 0.5 measured 219.8 expected 220
+2: 96000 ratio 1.05946 measured 466.194 expected 466.164
+2: 96000 ratio 2 measured 880.2 expected 880
+2: 96000 ratio 4 measured 1759.9 expected 1760
+2: Pitch detection, shift, correction and latency tests passed
+1/1 Test #2: Pitch ............................   Passed    1.16 sec
+
+The following tests passed:
+	Pitch
+
+100% tests passed out of 1
+
+Total Test time (real) =   1.16 sec

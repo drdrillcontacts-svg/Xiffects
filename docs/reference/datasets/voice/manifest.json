@@ -1,0 +1,20 @@
+{
+  "category": "voice",
+  "status": "NOT_RUN_MISSING_LICENSED_RECORDINGS",
+  "entries": [],
+  "required_fields_per_entry": [
+    "id",
+    "file",
+    "sha256",
+    "sample_rate",
+    "channels",
+    "source",
+    "rights_holder",
+    "license",
+    "permission_for_test_and_distribution",
+    "dry_recording",
+    "pitch_annotation",
+    "annotation_provenance"
+  ],
+  "note": "No real recordings were supplied or acquired. Synthetic harmonic proxies are NOT recordings and do not validate this category."
+}

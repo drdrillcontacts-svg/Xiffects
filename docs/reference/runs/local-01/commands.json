@@ -1,0 +1,233 @@
+[
+  {
+    "name": "cmake-version",
+    "command": [
+      "/home/user/Xiffects/.venv/bin/cmake",
+      "--version"
+    ],
+    "cwd": "/home/user/Xiffects",
+    "exit_code": 0,
+    "status": "PASS",
+    "stdout": "cmake-version.stdout.txt",
+    "stderr": "cmake-version.stderr.txt"
+  },
+  {
+    "name": "compiler-version",
+    "command": [
+      "c++",
+      "--version"
+    ],
+    "cwd": "/home/user/Xiffects",
+    "exit_code": 0,
+    "status": "PASS",
+    "stdout": "compiler-version.stdout.txt",
+    "stderr": "compiler-version.stderr.txt"
+  },
+  {
+    "name": "git-head",
+    "command": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "cwd": "/home/user/Xiffects",
+    "exit_code": 0,
+    "status": "PASS",
+    "stdout": "git-head.stdout.txt",
+    "stderr": "git-head.stderr.txt"
+  },
+  {
+    "name": "git-status",
+    "command": [
+      "git",
+      "status",
+      "--short"
+    ],
+    "cwd": "/home/user/Xiffects",
+    "exit_code": 0,
+    "status": "PASS",
+    "stdout": "git-status.stdout.txt",
+    "stderr": "git-status.stderr.txt"
+  },
+  {
+    "name": "portable-configure",
+    "command": [
+      "/home/user/Xiffects/.venv/bin/cmake",
+      "-S",
+      ".",
+      "-B",
+      "build-reference-portable",
+      "-DXIFFECTS_DSP_ONLY=ON",
+      "-DXIFFECTS_BUILD_BENCHMARKS=ON",
+      "-DCMAKE_BUILD_TYPE=Release"
+    ],
+    "cwd": "/home/user/Xiffects",
+    "exit_code": 0,
+    "status": "PASS",
+    "stdout": "portable-configure.stdout.txt",
+    "stderr": "portable-configure.stderr.txt"
+  },
+  {
+    "name": "portable-build",
+    "command": [
+      "/home/user/Xiffects/.venv/bin/cmake",
+      "--build",
+      "build-reference-portable",
+      "--parallel",
+      "2"
+    ],
+    "cwd": "/home/user/Xiffects",
+    "exit_code": 0,
+    "status": "PASS",
+    "stdout": "portable-build.stdout.txt",
+    "stderr": "portable-build.stderr.txt"
+  },
+  {
+    "name": "test-DSP",
+    "command": [
+      "ctest",
+      "--test-dir",
+      "build-reference-portable",
+      "-R",
+      "^DSP$",
+      "-V"
+    ],
+    "cwd": "/home/user/Xiffects",
+    "exit_code": 0,
+    "status": "PASS",
+    "stdout": "test-DSP.stdout.txt",
+    "stderr": "test-DSP.stderr.txt"
+  },
+  {
+    "name": "test-Pitch",
+    "command": [
+      "ctest",
+      "--test-dir",
+      "build-reference-portable",
+      "-R",
+      "^Pitch$",
+      "-V"
+    ],
+    "cwd": "/home/user/Xiffects",
+    "exit_code": 0,
+    "status": "PASS",
+    "stdout": "test-Pitch.stdout.txt",
+    "stderr": "test-Pitch.stderr.txt"
+  },
+  {
+    "name": "test-CorrectionRegression",
+    "command": [
+      "ctest",
+      "--test-dir",
+      "build-reference-portable",
+      "-R",
+      "^CorrectionRegression$",
+      "-V"
+    ],
+    "cwd": "/home/user/Xiffects",
+    "exit_code": 0,
+    "status": "PASS",
+    "stdout": "test-CorrectionRegression.stdout.txt",
+    "stderr": "test-CorrectionRegression.stderr.txt"
+  },
+  {
+    "name": "test-Realtime",
+    "command": [
+      "ctest",
+      "--test-dir",
+      "build-reference-portable",
+      "-R",
+      "^Realtime$",
+      "-V"
+    ],
+    "cwd": "/home/user/Xiffects",
+    "exit_code": 0,
+    "status": "PASS",
+    "stdout": "test-Realtime.stdout.txt",
+    "stderr": "test-Realtime.stderr.txt"
+  },
+  {
+    "name": "pitch-profile-independent",
+    "command": [
+      "/home/user/Xiffects/build-reference-portable/XiffectsPitchProfile"
+    ],
+    "cwd": "/home/user/Xiffects",
+    "exit_code": 0,
+    "status": "PASS",
+    "stdout": "pitch-profile-independent.stdout.txt",
+    "stderr": "pitch-profile-independent.stderr.txt"
+  },
+  {
+    "name": "fixture-generation",
+    "command": [
+      "/usr/bin/python",
+      "Tools/GenerateReferenceFixtures.py",
+      "build-reference-fixtures"
+    ],
+    "cwd": "/home/user/Xiffects",
+    "exit_code": 0,
+    "status": "PASS",
+    "stdout": "fixture-generation.stdout.txt",
+    "stderr": "fixture-generation.stderr.txt"
+  },
+  {
+    "name": "fixture-tests",
+    "command": [
+      "/usr/bin/python",
+      "Tests/FixtureTests.py"
+    ],
+    "cwd": "/home/user/Xiffects",
+    "exit_code": 0,
+    "status": "PASS",
+    "stdout": "fixture-tests.stdout.txt",
+    "stderr": "fixture-tests.stderr.txt"
+  },
+  {
+    "name": "native-configure",
+    "command": [
+      "/home/user/Xiffects/.venv/bin/cmake",
+      "-S",
+      ".",
+      "-B",
+      "build-reference-native",
+      "-DXIFFECTS_BUILD_REFERENCE_TOOLS=ON",
+      "-DCMAKE_BUILD_TYPE=Release"
+    ],
+    "cwd": "/home/user/Xiffects",
+    "exit_code": 1,
+    "status": "FAILED",
+    "stdout": "native-configure.stdout.txt",
+    "stderr": "native-configure.stderr.txt"
+  },
+  {
+    "name": "juce-resolved-commit",
+    "command": [
+      "git",
+      "-C",
+      "build-reference-native/_deps/juce-src",
+      "rev-parse",
+      "HEAD"
+    ],
+    "cwd": "/home/user/Xiffects",
+    "exit_code": 0,
+    "status": "PASS",
+    "stdout": "juce-resolved-commit.stdout.txt",
+    "stderr": "juce-resolved-commit.stderr.txt"
+  },
+  {
+    "name": "juce-resolved-tag",
+    "command": [
+      "git",
+      "-C",
+      "build-reference-native/_deps/juce-src",
+      "describe",
+      "--tags",
+      "--exact-match"
+    ],
+    "cwd": "/home/user/Xiffects",
+    "exit_code": 0,
+    "status": "PASS",
+    "stdout": "juce-resolved-tag.stdout.txt",
+    "stderr": "juce-resolved-tag.stderr.txt"
+  }
+]

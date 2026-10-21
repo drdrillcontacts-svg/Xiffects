@@ -1,0 +1,24 @@
+UpdateCTestConfiguration  from :/home/user/Xiffects/build-reference-portable/DartConfiguration.tcl
+Parse Config file:/home/user/Xiffects/build-reference-portable/DartConfiguration.tcl
+Test project /home/user/Xiffects/build-reference-portable
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 1
+    Start 1: DSP
+
+1: Test command: /home/user/Xiffects/build-reference-portable/XiffectsDSPTests
+1: Working Directory: /home/user/Xiffects/build-reference-portable
+1: Test timeout computed to be: 1500
+1: DSP tests passed at 44.1, 48 and 96 kHz
+1/1 Test #1: DSP ..............................   Passed    0.17 sec
+
+The following tests passed:
+	DSP
+
+100% tests passed out of 1
+
+Total Test time (real) =   0.17 sec

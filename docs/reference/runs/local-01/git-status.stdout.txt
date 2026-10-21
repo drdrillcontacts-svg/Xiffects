@@ -1,0 +1,10 @@
+ M CMakeLists.txt
+?? Tests/FixtureTests.py
+?? Tests/ReferenceTests.cpp
+?? Tools/CaptureReference.py
+?? Tools/GenerateReferenceFixtures.py
+?? Tools/ReferenceRender.cpp
+?? docs/reference/baseline-commit.txt
+?? docs/reference/configs/
+?? docs/reference/datasets/
+?? docs/reference/runs/

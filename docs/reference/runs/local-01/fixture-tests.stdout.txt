@@ -1,0 +1,2 @@
+Generated 16 synthetic WAV fixtures plus analytic input labels in /tmp/tmpt4wrlz_m/a
+Generated 16 synthetic WAV fixtures plus analytic input labels in /tmp/tmpt4wrlz_m/b
