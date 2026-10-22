@@ -1,0 +1,46 @@
+<JUCERPROJECT id="XifMob" name="Xiffects Live" projectType="audioplug" version="0.2.0" bundleIdentifier="com.xivan.xiffects.live" companyName="Xivan" pluginName="Xiffects Live" pluginManufacturer="Xivan" pluginManufacturerCode="Xiva" pluginCode="Xifl" pluginFormats="buildStandalone" pluginCharacteristicsValue="" cppLanguageStandard="17" defines="XIFFECTS_LIVE_MODE=1">
+  <MAINGROUP id="Main" name="Xiffects Live">
+    <FILE id="File0" name="PluginProcessor.cpp" compile="1" resource="0" file="../../Source/PluginProcessor.cpp" />
+    <FILE id="File1" name="PluginEditor.cpp" compile="1" resource="0" file="../../Source/PluginEditor.cpp" />
+    <FILE id="File2" name="hero.jpg" compile="0" resource="1" file="../../Assets/hero.jpg" />
+    <FILE id="File3" name="factory_presets.json" compile="0" resource="1" file="../../Assets/factory_presets.json" />
+  </MAINGROUP>
+  <EXPORTFORMATS>
+    <ANDROIDSTUDIO targetFolder="../../build-android" androidMinimumSDK="26" androidTargetSDK="34" microphonePermissionNeeded="1" androidScreenOrientation="portrait">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" isDebug="1" androidArchitectures="arm64-v8a" headerPath="../../Source" />
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_audio_basics" path="../../build-juce/modules" />
+        <MODULEPATH id="juce_audio_devices" path="../../build-juce/modules" />
+        <MODULEPATH id="juce_audio_formats" path="../../build-juce/modules" />
+        <MODULEPATH id="juce_audio_plugin_client" path="../../build-juce/modules" />
+        <MODULEPATH id="juce_audio_processors" path="../../build-juce/modules" />
+        <MODULEPATH id="juce_audio_utils" path="../../build-juce/modules" />
+        <MODULEPATH id="juce_core" path="../../build-juce/modules" />
+        <MODULEPATH id="juce_data_structures" path="../../build-juce/modules" />
+        <MODULEPATH id="juce_dsp" path="../../build-juce/modules" />
+        <MODULEPATH id="juce_events" path="../../build-juce/modules" />
+        <MODULEPATH id="juce_graphics" path="../../build-juce/modules" />
+        <MODULEPATH id="juce_gui_basics" path="../../build-juce/modules" />
+        <MODULEPATH id="juce_gui_extra" path="../../build-juce/modules" />
+      </MODULEPATHS>
+    </ANDROIDSTUDIO>
+  </EXPORTFORMATS>
+  <MODULES>
+    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="0" />
+    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="0" useGlobalPath="0" />
+    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="0" useGlobalPath="0" />
+    <MODULE id="juce_audio_plugin_client" showAllCode="1" useLocalCopy="0" useGlobalPath="0" />
+    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="0" useGlobalPath="0" />
+    <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="0" useGlobalPath="0" />
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="0" />
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="0" />
+    <MODULE id="juce_dsp" showAllCode="1" useLocalCopy="0" useGlobalPath="0" />
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="0" />
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="0" />
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="0" />
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="0" />
+  </MODULES>
+  <JUCEOPTIONS JUCE_WEB_BROWSER="0" JUCE_USE_CURL="0" JUCE_VST3_CAN_REPLACE_VST2="0" />
+</JUCERPROJECT>

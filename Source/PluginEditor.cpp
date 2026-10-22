@@ -29,10 +29,15 @@ XiffectsAudioProcessorEditor::XiffectsAudioProcessorEditor (XiffectsAudioProcess
 {
     setLookAndFeel(&lookAndFeel);
     hero = juce::ImageCache::getFromMemory(BinaryData::hero_jpg, BinaryData::hero_jpgSize);
+#if JUCE_IOS || JUCE_ANDROID
+    setResizable(true,false);
+    setSize(390,700);
+#else
     setResizable(true, true);
     setResizeLimits(1152, 720, 1920, 1200);
     if (auto* constrainer = getConstrainer()) constrainer->setFixedAspectRatio(1.6);
     setSize (1440, 900);
+#endif
     startTimerHz(24);
     brand.setText (p.isLiveMode()?"Xiffects LIVE":"Xiffects", juce::dontSendNotification);
     brand.setFont (juce::Font (p.isLiveMode()?30.0f:42.0f, juce::Font::plain));
@@ -177,12 +182,20 @@ XiffectsAudioProcessorEditor::XiffectsAudioProcessorEditor (XiffectsAudioProcess
     saveButton.onClick=[this] {choosePresetFile(true);};
     loadButton.onClick=[this] {choosePresetFile(false);};
     settingsButton.onClick=[this] {showSettings();};
+#if JUCE_IOS || JUCE_ANDROID
+    touchPage.addItemList({"Effects","Tuning","Monitor"},1);
+    touchModule.addItemList({"Octaver","Compressor","Reverb","Delay","Distortion","EQ","Pitch","Phaser","Auto Tune"},1);
+    for(auto* box:{&touchPage,&touchModule}) {styleCombo(*box);addAndMakeVisible(*box);box->setSelectedId(1);box->onChange=[this]{resized();repaint();};}
+#endif
     timerCallback();
     resized();
 }
 
 void XiffectsAudioProcessorEditor::paint (juce::Graphics& g)
 {
+#if JUCE_IOS || JUCE_ANDROID
+    paintTouch(g);return;
+#endif
     g.fillAll(bg);
     g.addTransform(juce::AffineTransform::scale(float(getWidth())/1440.0f, float(getHeight())/900.0f));
     g.setGradientFill(juce::ColourGradient(juce::Colour(0xff27282b),0,0, bg,0,100,false));
@@ -240,6 +253,9 @@ void XiffectsAudioProcessorEditor::paint (juce::Graphics& g)
 
 void XiffectsAudioProcessorEditor::resized()
 {
+#if JUCE_IOS || JUCE_ANDROID
+    layoutTouch();return;
+#endif
     brand.setBounds(48,20,230,50);
     byline.setBounds(290,30,230,30);
     saxLabel.setBounds(565,30,300,30);
@@ -372,3 +388,71 @@ void XiffectsAudioProcessorEditor::showSettings() {
             "Preset files store all parameters. Red piano indicators show the intersection of scale and manual permission.");
     });
 }
+
+#if JUCE_IOS || JUCE_ANDROID
+void XiffectsAudioProcessorEditor::layoutTouch() {
+    for(int i=0;i<getNumChildComponents();++i) {auto* c=getChildComponent(i);c->setTransform({});c->setVisible(false);}
+    const int w=getWidth(), page=touchPage.getSelectedId();
+    auto place=[](juce::Component& c,int x,int y,int width,int height){c.setVisible(true);c.setBounds(x,y,width,height);};
+    place(brand,12,4,w-80,44);brand.setFont(juce::Font(26.f));
+    place(powerButton,w-60,4,48,44);
+    place(presetBox,12,52,w-24,44);
+    place(saveButton,12,102,68,44);place(loadButton,84,102,68,44);
+    place(settingsButton,156,102,48,44);place(touchPage,210,102,w-222,44);
+    const int y=154;
+    if(page==1) {
+        place(touchModule,12,y,w-24,44);
+        const int index=juce::jlimit(0,8,touchModule.getSelectedId()-1);
+        if(index<int(modules.size())) {
+            auto& m=*modules[size_t(index)];place(m.bypass,w-104,y+50,92,44);
+            place(m.titleLabel,12,y+50,w-128,44);
+            const int width=(w-36)/2;
+            for(size_t j=0;j<m.sliders.size();++j) {
+                const int x=12+int(j%2)*(width+12), top=y+100+int(j/2)*126;
+                m.sliders[j]->setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
+                m.sliders[j]->setTextBoxStyle(juce::Slider::TextBoxBelow,false,90,30);
+                place(*m.sliders[j],x,top,width,100);place(*m.captions[j],x,top+100,width,24);
+            }
+        }
+    } else if(page==2) {
+        place(keyBox,12,y,82,44);place(scaleBox,102,y,w-114,44);
+        place(strengthLabel,12,y+50,w/2-18,30);place(speedLabel,w/2,y+50,w/2-12,30);
+        place(tuneStrength,12,y+82,w/2-18,88);place(tuneSpeed,w/2,y+82,w/2-12,88);
+        for(size_t i=0;i<12;++i)place(noteButtons[i],12+int(i%6)*(w-24)/6,y+184+int(i/6)*56,(w-24)/6-3,52);
+    } else {
+        outputSlider.setSliderStyle(juce::Slider::LinearHorizontal);
+        place(outputSlider,12,y,w-24,60);
+    }
+}
+void XiffectsAudioProcessorEditor::paintTouch(juce::Graphics& g) {
+    g.fillAll(bg);
+    if(touchPage.getSelectedId()!=3) {
+        if(getHeight()>650)g.drawImageWithin(hero,12,getHeight()-120,getWidth()-24,108,juce::RectanglePlacement::centred);
+        return;
+    }
+    const float width=float(getWidth()-24);
+    g.setColour(soft);g.drawText("OUTPUT / INPUT & OUTPUT METERS",12,224,getWidth()-24,24,juce::Justification::left);
+    for(int i=0;i<2;++i) {
+        const float peak=i==0?displayInput:displayOutput;
+        g.setColour(panel);g.fillRect(12.f,256.f+i*24,width,12.f);
+        g.setColour(red);g.fillRect(12.f,256.f+i*24,width*juce::jlimit(0.f,1.f,(juce::Decibels::gainToDecibels(peak,-60.f)+60)/60),12.f);
+    }
+    const auto area=juce::Rectangle<float>(12,320,width,100);
+    for(int trace=0;trace<2;++trace) {
+        juce::Path path;bool pen=false;
+        for(size_t i=0;i<history.size();++i) {
+            const auto& frame=history[(historyPosition+i)%history.size()];float note=trace==0?frame.detected:frame.corrected;
+            if(note<=0){pen=false;continue;}
+            float x=area.getX()+float(i)*width/float(history.size()), y=area.getBottom()-juce::jlimit(0.f,1.f,(note-48)/48)*100;
+            if(pen)path.lineTo(x,y);else path.startNewSubPath(x,y);pen=true;
+        }
+        g.setColour(trace==0?soft:red);g.strokePath(path,juce::PathStrokeType(1.5f));
+    }
+    g.setColour(soft);g.drawText("PITCH: INPUT / APPLIED ESTIMATE",12,294,getWidth()-24,22,juce::Justification::left);
+    g.setColour(red);
+    for(size_t i=0;i<history.size();++i) {
+        const auto& f=history[(historyPosition+i)%history.size()];
+        g.drawVerticalLine(12+int(float(i)*width/float(history.size())),470-f.maximum*30,470-f.minimum*30+.5f);
+    }
+}
+#endif

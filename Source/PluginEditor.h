@@ -13,6 +13,11 @@ public:
 
 private:
     void timerCallback() override;
+#if JUCE_IOS || JUCE_ANDROID
+    juce::ComboBox touchPage, touchModule;
+    void layoutTouch();
+    void paintTouch(juce::Graphics&);
+#endif
     void choosePresetFile(bool save);
     void showSettings();
     xiffects::LookAndFeel lookAndFeel;

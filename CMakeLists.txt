@@ -51,11 +51,15 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(JUCE)
 
 set(XIFFECTS_FORMATS VST3 Standalone)
-if(APPLE)
+if(CMAKE_SYSTEM_NAME STREQUAL "iOS")
+    set(XIFFECTS_FORMATS AUv3 Standalone)
+elseif(APPLE)
     list(APPEND XIFFECTS_FORMATS AU)
 endif()
 
 juce_add_plugin(Xiffects
+    MICROPHONE_PERMISSION_ENABLED TRUE
+    MICROPHONE_PERMISSION_TEXT "Process microphone or connected audio input through Xiffects effects."
     COMPANY_NAME "Xivan"
     BUNDLE_ID "com.xivan.xiffects"
     PLUGIN_MANUFACTURER_CODE Xiva
@@ -132,7 +136,9 @@ endif()
 option(XIFFECTS_BUILD_LIVE "Build experimental low-latency Live VST3 and standalone" OFF)
 if(XIFFECTS_BUILD_LIVE)
     juce_add_plugin(XiffectsLive
-        COMPANY_NAME "Xivan" BUNDLE_ID "com.xivan.xiffects.live"
+        MICROPHONE_PERMISSION_ENABLED TRUE
+    MICROPHONE_PERMISSION_TEXT "Process microphone or connected audio input through Xiffects effects."
+    COMPANY_NAME "Xivan" BUNDLE_ID "com.xivan.xiffects.live"
         PLUGIN_MANUFACTURER_CODE Xiva PLUGIN_CODE Xifl
         FORMATS ${XIFFECTS_FORMATS} PRODUCT_NAME "Xiffects Live"
         DESCRIPTION "Experimental low-latency soprano saxophone multi-effect"

@@ -1,0 +1,30 @@
+name: iOS and iPadOS unsigned compile
+on:
+  push:
+    paths: ['.github/workflows/mobile-ios.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  ios:
+    runs-on: macos-14
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generate iPhone and iPad project
+        run: >-
+          cmake -S . -B build-ios -G Xcode -DCMAKE_SYSTEM_NAME=iOS
+          -DCMAKE_OSX_DEPLOYMENT_TARGET=15.0 -DCMAKE_OSX_ARCHITECTURES=arm64
+          -DCMAKE_XCODE_ATTRIBUTE_TARGETED_DEVICE_FAMILY=1,2
+          -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED=NO
+          -DBUILD_TESTING=OFF -DXIFFECTS_BUILD_LIVE=ON
+      - name: Compile unsigned AUv3 and standalone container
+        run: cmake --build build-ios --config Release --target XiffectsLive_Standalone --parallel 3 -- CODE_SIGNING_ALLOWED=NO
+      - name: Archive build evidence (not an installable IPA)
+        run: |
+          mkdir package
+          ditto -c -k --sequesterRsrc --keepParent build-ios/XiffectsLive_artefacts/Release package/Xiffects-iOS-unsigned-NOT-INSTALLABLE.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Xiffects-iOS-iPadOS-unsigned-build-only
+          path: package/*.zip
