@@ -1,0 +1,22 @@
+{
+  "DELIVERY.fa.md": "2123e38495e9548755f6f2cb598a300d8f1304cd2e89420b1c5bc4052f58a05d",
+  "README.md": "31e13e07457cd22c3876b64da8046fe76db48bf8fe21c8ee39d63467356cc89c",
+  "android-annotations.json": "7efbc3edd26178cc3d992caa34742792af8e954d762a1a771c1c64e867ce1a2f",
+  "android-artifacts.json": "8fcf7613bec7998ff44281e1310327dfe6d1c5f3bcff5c59aab4365aa82cc7b6",
+  "android-jobs.json": "c0aeaad46d491dff06376b72c8e9c367b5f3e051cc267b08784c40966a27b109",
+  "android-run.json": "da4701911bf4a236307b8f1745374e392b068916b9b2741bea19ab954989557d",
+  "desktop-artifacts.json": "2375902e62a225fbc05ecb8845b469f9fcaf7a1d27e3556b5b8e3ce78a94a0b9",
+  "desktop-jobs.json": "50e25914586de217ad90dad942b5c26df5fda28ce941ea789068e57b6fe55a68",
+  "desktop-run.json": "b2c49eea10e1411af1706bc2fec5db78de51146670178e431632eb065520945b",
+  "inspection-annotations.json": "72c54156b6f838698694b5fd4710dcaded71e4a46b48aa4cd452e083da1a75c5",
+  "inspection-run.json": "84a12a3b02109eca27cc287d3fc0aeafe2211670b8de99e89d5287f5f24374fb",
+  "ios-artifacts.json": "55e8b65f047f4d33d120dcc86c579d86a0812b0f33fc5aeba244969e32debce1",
+  "ios-jobs.json": "39c43dc3f748268c0f078652a363a064de5e0028b2b0aa94e7a68ab844a0ceab",
+  "ios-run.json": "0e670940f14715f748e68ca48758c44b041cc9c8484e3efaf7b8b442834957f6",
+  "local-environment.txt": "c4f92dab12d8bd2c94b337f13785d4aa0327142922785a834b9bed68e3494009",
+  "mac-au-diagnostic.json": "e4b86a2be73bc2f4484546e8d12a7fa2ca91f5d0d64782fbd44bd0667aa5ad4e",
+  "package-inspection-summary.json": "b018e87dd400f97af696cf5eb0929683db2f73ab9a54b1dac09f08a462c9e0b3",
+  "portable-tests.txt": "ee5ba1fd4b1d10b46d9106c35f7b1e1ae8f5117ed8f2fc666be71e49c3664780",
+  "production-hashes.json": "e6bf274291e21f10c767237f9bd0ccc58ef409c1eff52dfa3b97de3c18eb93aa",
+  "scale-sanitized.txt": "adf12f3a191be2423722d7add91404ec83e244236e78ccd74c8da495ebc8826c"
+}

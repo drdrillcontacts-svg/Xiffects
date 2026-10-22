@@ -1,0 +1,104 @@
+UpdateCTestConfiguration  from :/home/user/Xiffects/build-bank/DartConfiguration.tcl
+Parse Config file:/home/user/Xiffects/build-bank/DartConfiguration.tcl
+Test project /home/user/Xiffects/build-bank
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 1
+    Start 1: Scales
+
+1: Test command: /home/user/Xiffects/build-bank/XiffectsScaleTests
+1: Working Directory: /home/user/Xiffects/build-bank
+1: Test timeout computed to be: 1500
+1: 44 scale entries: all keys, transposition, manual intersection and custom targeting passed
+1/7 Test #1: Scales ...........................   Passed    0.01 sec
+test 2
+    Start 2: DSP
+
+2: Test command: /home/user/Xiffects/build-bank/XiffectsDSPTests
+2: Working Directory: /home/user/Xiffects/build-bank
+2: Test timeout computed to be: 1500
+2: DSP tests passed at 44.1, 48 and 96 kHz
+2/7 Test #2: DSP ..............................   Passed    0.17 sec
+test 3
+    Start 3: Pitch
+
+3: Test command: /home/user/Xiffects/build-bank/XiffectsPitchTests
+3: Working Directory: /home/user/Xiffects/build-bank
+3: Test timeout computed to be: 1500
+3: 44100 ratio 0.25 measured 109.9 expected 110
+3: 44100 ratio 0.5 measured 219.8 expected 220
+3: 44100 ratio 1.05946 measured 466.194 expected 466.164
+3: 44100 ratio 2 measured 880.2 expected 880
+3: 44100 ratio 4 measured 1759.9 expected 1760
+3: 48000 ratio 0.25 measured 109.9 expected 110
+3: 48000 ratio 0.5 measured 219.8 expected 220
+3: 48000 ratio 1.05946 measured 466.194 expected 466.164
+3: 48000 ratio 2 measured 880.2 expected 880
+3: 48000 ratio 4 measured 1759.9 expected 1760
+3: 96000 ratio 0.25 measured 109.9 expected 110
+3: 96000 ratio 0.5 measured 219.8 expected 220
+3: 96000 ratio 1.05946 measured 466.194 expected 466.164
+3: 96000 ratio 2 measured 880.2 expected 880
+3: 96000 ratio 4 measured 1759.9 expected 1760
+3: Pitch detection, shift, correction and latency tests passed
+3/7 Test #3: Pitch ............................   Passed    1.39 sec
+test 4
+    Start 4: Onset
+
+4: Test command: /home/user/Xiffects/build-bank/XiffectsOnsetTests
+4: Working Directory: /home/user/Xiffects/build-bank
+4: Test timeout computed to be: 1500
+4: 44100,452Hz,onset5ms,applied=69.0002,audio=439.935,jump=0.0129574
+4: 48000,452Hz,onset5ms,applied=69.0004,audio=439.897,jump=0.0119057
+4: 96000,452Hz,onset5ms,applied=69.0004,audio=439.848,jump=0.00596132
+4: Onset envelope, reacquisition, hysteresis and mask checks passed
+4/7 Test #4: Onset ............................   Passed    0.89 sec
+test 5
+    Start 5: LivePitch
+
+5: Test command: /home/user/Xiffects/build-bank/XiffectsLivePitchTests
+5: Working Directory: /home/user/Xiffects/build-bank
+5: Test timeout computed to be: 1500
+5: sr=44100 live_samples=531 live_ms=12.0408 studio_ms=60.0907
+5: input=100 actual=97.6566 target=97.9988
+5: input=146.83 actual=146.825 target=146.832
+5: input=452 actual=439.936 target=440
+5: input=880 actual=879.065 target=880
+5: input=1396.91 actual=1395.33 target=1396.91
+5: sr=48000 live_samples=578 live_ms=12.0417 studio_ms=60.0833
+5: input=100 actual=97.5796 target=97.9988
+5: input=146.83 actual=146.824 target=146.832
+5: input=452 actual=439.891 target=440
+5: input=880 actual=878.959 target=880
+5: input=1396.91 actual=1394.29 target=1396.91
+5: sr=96000 live_samples=1154 live_ms=12.0208 studio_ms=60.0417
+5: input=100 actual=97.5813 target=97.9988
+5: input=146.83 actual=146.824 target=146.832
+5: input=452 actual=439.884 target=440
+5: input=880 actual=878.959 target=880
+5: input=1396.91 actual=1394.31 target=1396.91
+5/7 Test #5: LivePitch ........................   Passed    0.31 sec
+test 6
+    Start 6: CorrectionRegression
+
+6: Test command: /home/user/Xiffects/build-bank/XiffectsCorrectionRegressionTests
+6: Working Directory: /home/user/Xiffects/build-bank
+6: Test timeout computed to be: 1500
+6: Detector bounds and sample-wise correction regression passed
+6/7 Test #6: CorrectionRegression .............   Passed    0.10 sec
+test 7
+    Start 7: Realtime
+
+7: Test command: /home/user/Xiffects/build-bank/XiffectsRealtimeTests
+7: Working Directory: /home/user/Xiffects/build-bank
+7: Test timeout computed to be: 1500
+7: Zero DSP allocations; concurrent telemetry test passed
+7/7 Test #7: Realtime .........................   Passed    0.04 sec
+
+100% tests passed out of 7
+
+Total Test time (real) =   2.90 sec

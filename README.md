@@ -4,7 +4,17 @@ Native C++17 / JUCE 8.0.6 soprano saxophone multi-effect, VST3 and Standalone.
 This is a working implementation in development, **not an acoustically validated
 commercial release**. No web view or full-interface screenshot is used as UI.
 
-## Low-latency Live candidate (Windows)
+## Factory bank and cross-platform development builds
+
+The current native implementation includes **50 complete factory presets** and
+**44 scale choices** (12-TET maps including Custom/Manual and named synonyms).
+All preset parameters are restored explicitly. Microtonal/cultural cents tuning
+is not yet implemented. See [current builds, tests and platform limits](docs/release/README.md)
+for Windows VST3/standalone, macOS VST3/AU, iOS/iPadOS AUv3/container and Android.
+Mobile touch pages use the same actual DSP; compilation is not device validation.
+Further latency reduction is **not** part of this bank/platform change.
+
+## Earlier low-latency Live candidate (Windows)
 
 A separate **Xiffects Live** VST3/Standalone now removes the serial pitch-buffer
 stage. Actual processor impulse tests measure approximately **12.04 ms nominal
@@ -57,10 +67,11 @@ DSP is separate from the native GUI, with a lock-free SPSC telemetry queue.
 
 ## Pitch correction / manual notes
 
-- Keys C–B, eight scales: Chromatic, Major, Minor, Harmonic Minor, ascending
-  Melodic Minor, Dorian, Mixolydian, major Pentatonic.
+- Keys C–B, 44 named scale choices including Custom/Manual; see `Source/DSP/Scales.h`.
+  The original eight scale indices/automation range remain intact via a separate extended selector.
+  These maps use 12-tone equal temperament, not microtonal regional tuning.
 - Effective targets = selected scale transposed by key **AND** manual switches.
-  To use any arbitrary manual set, select Chromatic first. Red key indicators
+  To use any arbitrary manual set, select Custom/Manual or Chromatic first. Red key indicators
   mean effective permission; grey keys may be manually off or out of scale.
 - Nearest allowed note, with 15-cent hysteresis to reduce boundary chatter.
   Removing a target immediately invalidates hysteresis. An empty mask releases
@@ -105,10 +116,11 @@ audio is not clamped. The conservatively reported effect tail is 300 seconds.
 - Live input/output peak meters and actual output min/max waveform envelope.
 - Embedded hero cropped from the supplied reference, preserving the musician.
   See `Assets/README.md`: this is not an independently supplied original photo.
-- Resizable, fixed-aspect 1440×900 design; 1152×720 minimum. Settings provides
+- Desktop: resizable, fixed-aspect 1440×900 design; 1152×720 minimum. Settings provides
   80/100/120% sizes and processing/latency information.
-- Factory recipes; Default resets every parameter to its default. Other recipes
-  preserve note selections and change a subset of effect parameters.
+- 50 factory recipes restore every parameter, including manual note choices, power and output.
+- Mobile: separate Effects / Tuning / Monitor pages with larger native touch controls;
+  physical-device, host-sizing and accessibility validation remains pending.
 - SAVE / LOAD `.xiffects` XML files on the message thread; invalid/unknown or
   nonfinite parameter values are rejected, numeric values are range-clamped.
   Host projects save all parameter values. Preset dropdown text and UI zoom
@@ -184,7 +196,7 @@ Full JUCE host tests additionally exercise mono/stereo, empty and variable block
 all-parameter state round-trip, native editor construction/resizing and screenshot.
 See `docs/VALIDATION.md` for release acceptance gates and observed verification.
 
-## Commercial-readiness workstream (2026-10-22)
+## Historical audit stage (before the Live and factory-bank changes)
 
 The new [technical audit and staged plan](docs/COMMERCIAL_AUDIT.md) inventories
 current risks, all 44 requested scales, microtonal/preset compatibility and each

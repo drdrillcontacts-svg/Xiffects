@@ -1,0 +1,74 @@
+{
+  "tests": [
+    {
+      "path": "desktop/Tests-windows-latest/tests.xml",
+      "passed": [
+        "Scales",
+        "DSP",
+        "Pitch",
+        "Onset",
+        "LivePitch",
+        "CorrectionRegression",
+        "Realtime",
+        "Host",
+        "LiveHost"
+      ]
+    },
+    {
+      "path": "desktop/Tests-macos-14/tests.xml",
+      "passed": [
+        "Scales",
+        "DSP",
+        "Pitch",
+        "Onset",
+        "LivePitch",
+        "CorrectionRegression",
+        "Realtime",
+        "Host",
+        "LiveHost"
+      ]
+    }
+  ],
+  "files": [
+    {
+      "path": "desktop/Xiffects-Live-Windows-x64-50-presets/VST3/Xiffects Live.vst3/Contents/x86_64-win/Xiffects Live.vst3",
+      "architecture": "Windows x64",
+      "sha256": "c55c48951237571090a2b08b6a85904e65cf510e4b6585aa2d0ce5ebec18d13e"
+    },
+    {
+      "path": "Release/VST3/Xiffects Live.vst3/Contents/MacOS/Xiffects Live",
+      "architecture": "macOS arm64+x86_64",
+      "sha256": "eeaa48831e049670e94fc980bad52ad9142454d3d2b3b5be298330da61198787"
+    },
+    {
+      "path": "Release/Standalone/Xiffects Live.app/Contents/MacOS/Xiffects Live",
+      "architecture": "macOS arm64+x86_64",
+      "sha256": "182ab3c9610bd9728aa1f831eafe1ca1aa15b082043df11d7b725001ce9b4293"
+    },
+    {
+      "path": "Release/AU/Xiffects Live.component/Contents/MacOS/Xiffects Live",
+      "architecture": "macOS arm64+x86_64",
+      "sha256": "f10b334f69a788a09f3c5a244397127b4a660eab2ff17d7099d7f97a849f14cf"
+    },
+    {
+      "path": "android/debug_/debug/app-debug_-debug.apk",
+      "sha256": "16428156ae56e62e362e508018d7e37f457cf971b37bcb42628bef85fa3863ff",
+      "kind": "development APK, not device-tested"
+    }
+  ],
+  "android_native_libraries": [
+    "lib/arm64-v8a/libjuce_jni.so"
+  ],
+  "ios": {
+    "device_families": [
+      1,
+      2
+    ],
+    "microphone_description": "Process microphone or connected audio input through Xiffects effects.",
+    "extensions": [
+      "Release/AUv3/Xiffects Live.appex/Info.plist",
+      "Release/Standalone/Xiffects Live.app/PlugIns/Xiffects Live.appex/Info.plist"
+    ],
+    "signed_for_installation": false
+  }
+}
