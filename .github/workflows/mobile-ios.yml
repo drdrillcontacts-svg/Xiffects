@@ -1,7 +1,7 @@
 name: iOS and iPadOS unsigned compile
 on:
   push:
-    paths: ['.github/workflows/mobile-ios.yml']
+    paths: ['.github/workflows/mobile-ios.yml', 'Source/**', 'Assets/**', 'CMakeLists.txt']
   workflow_dispatch:
 permissions:
   contents: read

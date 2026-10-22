@@ -3,6 +3,12 @@
 #include <stdexcept>
 inline void testFactoryBank() {
     auto check=[](bool value,const char* text){if(!value)throw std::runtime_error(text);};
+    XiffectsAudioProcessor legacy;
+    auto old=legacy.parameters.copyState();
+    old.removeChild(old.getChildWithProperty("id","TUNE_SCALE_EXT"),nullptr);
+    const auto migrated=XiffectsAudioProcessor::migrateState(old);
+    check(migrated.getChildWithProperty("id","TUNE_SCALE_EXT").isValid(),"Legacy extended selector migration");
+    check(float(migrated.getChildWithProperty("id","TUNE_SCALE_EXT")["value"])==0,"Legacy scale remains effective");
     const auto& bank=XiffectsAudioProcessor::factoryPresets();check(bank.size()==50,"50 factory snapshots");
     std::set<std::string> names,snapshots;
     for(int i=0;i<bank.size();++i) {

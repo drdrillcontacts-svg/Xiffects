@@ -47,6 +47,7 @@ public:
     static const juce::Array<juce::var>& factoryPresets();
     void loadFactoryPreset(int index);
     int selectedScale() const;
+    static juce::ValueTree migrateState(juce::ValueTree state);
 
 private:
     enum Control { compOn, revOn, delayOn, distOn, eqOn, phaserOn,

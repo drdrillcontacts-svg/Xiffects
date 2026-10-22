@@ -341,7 +341,7 @@ void XiffectsAudioProcessorEditor::choosePresetFile(bool save) {
         } else if(file.getSize()<1024*1024) {
             auto xml=juce::XmlDocument::parse(file);
             if(xml!=nullptr && xml->hasTagName(safe->processor.parameters.state.getType())) {
-                const auto state=juce::ValueTree::fromXml(*xml);
+                const auto state=XiffectsAudioProcessor::migrateState(juce::ValueTree::fromXml(*xml));
                 // Validate first, then apply complete parameter values through host gestures.
                 ok=state.isValid() && state.getNumChildren()>0;
                 for(const auto child:state) {

@@ -1,7 +1,7 @@
 name: Android real-audio debug candidate
 on:
   push:
-    paths: ['.github/workflows/mobile-android.yml', 'Platforms/Android/**']
+    paths: ['.github/workflows/mobile-android.yml', 'Platforms/Android/**', 'Source/**', 'Assets/**']
   workflow_dispatch:
 permissions:
   contents: read

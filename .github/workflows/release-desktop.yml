@@ -30,6 +30,8 @@ jobs:
         run: |
           mkdir -p ~/Library/Audio/Plug-Ins/Components
           ditto "build-release/XiffectsLive_artefacts/Release/AU/Xiffects Live.component" "$HOME/Library/Audio/Plug-Ins/Components/Xiffects Live.component"
+          killall -9 AudioComponentRegistrar || true
+          auval -a
           auval -v aufx Xifl Xiva
       - name: Validate Windows VST3
         if: runner.os == 'Windows'

@@ -192,7 +192,7 @@ void XiffectsAudioProcessor::setStateInformation (const void* data, int sizeInBy
 {
     std::unique_ptr<juce::XmlElement> xml (getXmlFromBinary (data, sizeInBytes));
     if (xml != nullptr && xml->hasTagName (parameters.state.getType()))
-        parameters.replaceState (juce::ValueTree::fromXml (*xml));
+        parameters.replaceState (migrateState(juce::ValueTree::fromXml (*xml)));
 }
 
 // Required entry point for both VST3 and Standalone wrappers.
@@ -217,4 +217,14 @@ void XiffectsAudioProcessor::loadFactoryPreset(int index) {
             parameter->endChangeGesture();
         }
     }
+}
+
+juce::ValueTree XiffectsAudioProcessor::migrateState(juce::ValueTree state) {
+    if(state.isValid() && !state.getChildWithProperty("id","TUNE_SCALE_EXT").isValid()) {
+        juce::ValueTree extension("PARAM");
+        extension.setProperty("id","TUNE_SCALE_EXT",nullptr);
+        extension.setProperty("value",0.f,nullptr);
+        state.appendChild(extension,nullptr);
+    }
+    return state;
 }

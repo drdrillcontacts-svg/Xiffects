@@ -41,7 +41,7 @@ inline constexpr std::array<Scale,44> scales {{
     {"Hirajoshi",0x18d},
     {"Insen",0x4a3},
     {"Iwato",0x163},
-    {"Kumoi",0x2a5},
+    {"Ritusen",0x2a5},
     {"Egyptian Pentatonic",0x4a5},
     {"Bebop Dominant",0xeb5},
     {"Bebop Major",0xbb5},
