@@ -1,0 +1,29 @@
+name: Inspect Android compiler evidence
+on:
+  push:
+    paths: ['.github/workflows/mobile-diagnostics.yml']
+permissions:
+  actions: read
+  contents: read
+jobs:
+  diagnostics:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Retrieve failed compiler output
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh api repos/drdrillcontacts-svg/Xiffects/actions/jobs/119556781531/logs > android-log.txt
+          python - <<'PY'
+          from pathlib import Path
+          s=Path('android-log.txt').read_text()
+          lines=[l for l in s.splitlines() if any(x in l.lower() for x in ['error','fatal','failed','no rule','not found'])]
+          text='\n'.join(lines)[-10000:]
+          for i in range(0,len(text),3000):
+              part=text[i:i+3000].replace('%','%25').replace('\r','%0D').replace('\n','%0A')
+              print('::notice title=AndroidCompiler'+str(i)+'::'+part)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Android-first-build-diagnostic
+          path: android-log.txt
