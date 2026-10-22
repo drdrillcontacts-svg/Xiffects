@@ -16,13 +16,13 @@ jobs:
           distribution: temurin
           java-version: '17'
       - name: Install Projucer build dependencies
-        run: sudo apt-get update && sudo apt-get install -y libasound2-dev libx11-dev libxext-dev libxinerama-dev libxrandr-dev libxcursor-dev libfreetype6-dev libfontconfig1-dev libgl1-mesa-dev
+        run: sudo apt-get update && sudo apt-get install -y libasound2-dev libx11-dev libxext-dev libxinerama-dev libxrandr-dev libxcursor-dev libfreetype6-dev libfontconfig1-dev libgl1-mesa-dev libcurl4-openssl-dev
       - name: Generate native Android audio application
         run: |
           exec > >(tee "$GITHUB_WORKSPACE/android-build.log") 2>&1
           git clone --depth 1 --branch 8.0.6 https://github.com/juce-framework/JUCE.git build-juce
           cmake -S build-juce -B build-projucer -DJUCE_BUILD_EXTRAS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
-          cmake --build build-projucer --target Projucer --parallel 1
+          cmake --build build-projucer --target Projucer --parallel 2
           build-projucer/extras/Projucer/Projucer_artefacts/Release/Projucer --resave Platforms/Android/Xiffects.jucer
           echo "sdk.dir=$ANDROID_HOME" > build-android/local.properties
       - name: Build ARM64 debug APK
