@@ -19,16 +19,34 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y libasound2-dev libx11-dev libxext-dev libxinerama-dev libxrandr-dev libxcursor-dev libfreetype6-dev libfontconfig1-dev libgl1-mesa-dev
       - name: Generate native Android audio application
         run: |
+          exec > >(tee "$GITHUB_WORKSPACE/android-build.log") 2>&1
           git clone --depth 1 --branch 8.0.6 https://github.com/juce-framework/JUCE.git build-juce
-          cmake -S build-juce -B build-projucer -DJUCE_BUILD_EXTRAS=ON -DCMAKE_BUILD_TYPE=Release
-          cmake --build build-projucer --target Projucer --parallel 3
+          cmake -S build-juce -B build-projucer -DJUCE_BUILD_EXTRAS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
+          cmake --build build-projucer --target Projucer --parallel 1
           build-projucer/extras/Projucer/Projucer_artefacts/Release/Projucer --resave Platforms/Android/Xiffects.jucer
           echo "sdk.dir=$ANDROID_HOME" > build-android/local.properties
       - name: Build ARM64 debug APK
         working-directory: build-android
-        run: chmod +x gradlew && ./gradlew assembleDebug --no-daemon
+        run: chmod +x gradlew && ./gradlew assembleDebug --no-daemon 2>&1 | tee "$GITHUB_WORKSPACE/gradle-build.log"
       - uses: actions/upload-artifact@v4
         with:
           name: Xiffects-Android-arm64-debug-UNTESTED-ON-DEVICE
           path: build-android/app/build/outputs/apk/debug/*.apk
           if-no-files-found: error
+      - name: Retain build diagnostics
+        if: always()
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          for filename in ['android-build.log','gradle-build.log']:
+              p=Path(filename)
+              if not p.exists(): continue
+              lines=p.read_text(errors='replace').splitlines()
+              text='\n'.join([l for l in lines if any(k in l.lower() for k in ['error','fatal','failed','no rule'])][-15:]+lines[-8:])[-3500:]
+              print('::notice title='+filename+'::'+text.replace('%','%25').replace('\r','%0D').replace('\n','%0A'))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Android-compiler-logs
+          path: '*-build.log'
