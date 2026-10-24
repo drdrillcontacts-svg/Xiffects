@@ -54,7 +54,10 @@ XiffectsAudioProcessorEditor::XiffectsAudioProcessorEditor (XiffectsAudioProcess
     addAndMakeVisible (saxLabel);
 
     const auto& bank=XiffectsAudioProcessor::factoryPresets();
-    for(int i=0;i<bank.size();++i) presetBox.addItem(bank[i]["category"].toString()+" / "+bank[i]["name"].toString(),i+1);
+    for(int i=0;i<bank.size();++i) {
+        if(i==0 || bank[i]["category"]!=bank[i-1]["category"])presetBox.addSectionHeading(bank[i]["category"].toString());
+        presetBox.addItem(bank[i]["name"].toString(),i+1);
+    }
     presetBox.setText("Factory presets",juce::dontSendNotification);
     presetBox.onChange=[this] {processor.loadFactoryPreset(presetBox.getSelectedId()-1);};
     previousPreset.setTooltip("Previous factory preset (wraps at first)");
