@@ -1,0 +1,7 @@
+{
+  "reference": "26e8bb36aac808f1922373e65e0c8a357cf668df",
+  "changed_files": {
+    "Source/DSP/Pitch.h": "ee8c43e3b2fb88d6b4f88203a73f9d1997fb650b783179ccc2460cea6f40c6ba"
+  },
+  "reference_pitch_sha256": "589d61f11035456845526be6bbcabc0c1ab718ed8c072681cea20a95f78704cf"
+}

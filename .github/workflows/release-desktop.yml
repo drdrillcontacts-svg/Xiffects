@@ -1,0 +1,67 @@
+name: Desktop factory bank candidate
+on:
+  push:
+    paths: ['Source/**', 'Assets/**', 'Tests/**', 'CMakeLists.txt', '.github/workflows/release-desktop.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  desktop:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-14]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure Windows
+        if: runner.os == 'Windows'
+        run: cmake -S . -B build-release -DCMAKE_BUILD_TYPE=Release -DXIFFECTS_BUILD_LIVE=ON
+      - name: Configure universal macOS
+        if: runner.os == 'macOS'
+        run: cmake -S . -B build-release -DCMAKE_BUILD_TYPE=Release -DXIFFECTS_BUILD_LIVE=ON '-DCMAKE_OSX_ARCHITECTURES=arm64;x86_64'
+      - name: Build
+        run: cmake --build build-release --config Release --parallel 3
+      - name: Product and factory tests
+        run: ctest --test-dir build-release -C Release --output-on-failure --output-junit tests.xml
+      - name: Validate AU in system host
+        if: runner.os == 'macOS'
+        run: |
+          mkdir -p ~/Library/Audio/Plug-Ins/Components
+          ditto "build-release/XiffectsLive_artefacts/Release/AU/Xiffects Live.component" "$HOME/Library/Audio/Plug-Ins/Components/Xiffects Live.component"
+          killall -9 AudioComponentRegistrar || true
+          auval -a
+          auval -v aufx Xifl Xiva
+      - name: Validate Windows VST3
+        if: runner.os == 'Windows'
+        run: |
+          Invoke-WebRequest https://github.com/Tracktion/pluginval/releases/download/v1.0.4/pluginval_Windows.zip -OutFile pluginval.zip
+          Expand-Archive pluginval.zip pluginval
+          $exe = (Get-ChildItem pluginval -Recurse -Filter pluginval.exe | Select-Object -First 1).FullName
+          & $exe --strictness-level 5 --validate "$pwd/build-release/XiffectsLive_artefacts/Release/VST3/Xiffects Live.vst3"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Package macOS bundles without losing symlinks
+        if: runner.os == 'macOS'
+        run: |
+          mkdir -p package
+          ditto -c -k --sequesterRsrc --keepParent build-release/XiffectsLive_artefacts/Release package/Xiffects-Live-macOS-universal-unsigned.zip
+      - uses: actions/upload-artifact@v4
+        if: runner.os == 'macOS' && success()
+        with:
+          name: Xiffects-Live-macOS-universal-unsigned
+          path: package/*.zip
+      - uses: actions/upload-artifact@v4
+        if: runner.os == 'Windows' && success()
+        with:
+          name: Xiffects-Live-Windows-x64-50-presets
+          path: |
+            build-release/XiffectsLive_artefacts/Release/VST3/
+            build-release/XiffectsLive_artefacts/Release/Standalone/
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Tests-${{ matrix.os }}
+          path: |
+            build-release/tests.xml
+            build-release/Testing/Temporary/

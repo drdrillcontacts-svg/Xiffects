@@ -1,0 +1,4 @@
+44100,452Hz,onset5ms,applied=69.0002,audio=439.935,jump=0.0129574
+48000,452Hz,onset5ms,applied=69.0004,audio=439.897,jump=0.0119057
+96000,452Hz,onset5ms,applied=69.0004,audio=439.848,jump=0.00596132
+Onset envelope, reacquisition, hysteresis and mask checks passed

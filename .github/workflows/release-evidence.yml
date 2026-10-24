@@ -1,0 +1,35 @@
+name: Inspect final platform packages
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          run-id: 39699124874
+          path: desktop
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: Xiffects-Android-arm64-debug-UNTESTED-ON-DEVICE
+          run-id: 39699179967
+          path: android
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: Xiffects-iOS-iPadOS-unsigned-build-only
+          run-id: 39699124885
+          path: ios
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Inspect actual packaged binaries and complete test summaries
+        run: python3 Tools/InspectPlatformPackages.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Platform-package-inspection
+          path: platform-inspection.json

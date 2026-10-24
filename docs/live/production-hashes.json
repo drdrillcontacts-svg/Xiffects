@@ -1,0 +1,10 @@
+{
+  "base": "e2cc9e9",
+  "changed_files": {
+    "Source/DSP/Pitch.h": "5acf5b59b685717d04dc15d3508c3ebbc2d7b036a275b841cfa69f20cbf52c58",
+    "Source/DSP/LivePitchBank.h": "6e258f9dead40f465da36222d66fca28d7c7b1c852147784a7ad47b8bf98c552",
+    "Source/PluginProcessor.cpp": "05506c648f1518f3bcc38d9ca68d05f505b9d89361e4fb41aa93332cbf25db44",
+    "Source/PluginProcessor.h": "3bf314ce53c66996dc5a184967b305816d0b0d2535a6a9320d8f3c4508327141",
+    "Source/PluginEditor.cpp": "15235b662b56167b6c8ec4fef3459bd8739c8c0fc10d728ec3b67d42619e2dee"
+  }
+}

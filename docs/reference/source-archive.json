@@ -1,0 +1,7 @@
+{
+  "baseline_commit": "26e8bb36aac808f1922373e65e0c8a357cf668df",
+  "archive_name": "Xiffects-Reference-26e8bb3.zip",
+  "sha256": "a769a333387d38c05a8a2972bd96710e236d34d83ae5fab692bb3bd086b7962f",
+  "bytes": 175428,
+  "description": "Source snapshot BEFORE new harness changes; does not include JUCE download or built binaries. Recreate with git archive --format=zip <baseline_commit>."
+}

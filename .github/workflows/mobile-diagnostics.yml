@@ -1,0 +1,42 @@
+name: Inspect macOS AU host validation
+on:
+  workflow_dispatch:
+permissions:
+  actions: read
+  contents: read
+jobs:
+  diagnostics:
+    runs-on: macos-14
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: Xiffects-Live-macOS-arm64-unsigned
+          run-id: 39697025004
+          path: downloaded
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install and validate saved AU bundle
+        shell: bash
+        run: |
+          ditto -x -k downloaded/*.zip extracted
+          component=$(find extracted -name '*.component' -type d | head -1)
+          mkdir -p "$HOME/Library/Audio/Plug-Ins/Components"
+          ditto "$component" "$HOME/Library/Audio/Plug-Ins/Components/Xiffects Live.component"
+          killall -9 AudioComponentRegistrar || true
+          set +e
+          auval -a > registry.txt 2>&1
+          auval -v aufx Xifl Xiva > auval.txt 2>&1
+          result=$?
+          python3 - <<'PY'
+          from pathlib import Path
+          for name in ['registry.txt','auval.txt']:
+              s=Path(name).read_text(errors='replace')
+              if name=='registry.txt':s='\n'.join(l for l in s.splitlines() if 'Xif' in l or 'Xiv' in l)
+              s=s[-3500:]
+              print('::notice title='+name+'::'+s.replace('%','%25').replace('\n','%0A').replace('\r','%0D'))
+          PY
+          exit $result
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: AU-validation-diagnostic
+          path: '*.txt'

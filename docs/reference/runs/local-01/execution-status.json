@@ -1,0 +1,19 @@
+{
+  "portable_tests": {
+    "DSP": "PASS",
+    "Pitch": "PASS",
+    "CorrectionRegression": "PASS",
+    "Realtime": "PASS",
+    "FixtureTests": "PASS"
+  },
+  "native_configure": "FAILED_SEE_RAW_LOG",
+  "ReferenceRender": "NOT_RUN",
+  "ReferenceProcessor": "NOT_RUN",
+  "Host": "NOT_RUN",
+  "Windows_VST3_build": "NOT_RUN_IN_THIS_CAPTURE",
+  "VST3_in_DAW": "NOT_RUN",
+  "hardware_round_trip": "NOT_MEASURED",
+  "real_voice": "NOT_RUN_MISSING_LICENSED_RECORDINGS",
+  "real_saxophone": "NOT_RUN_MISSING_LICENSED_RECORDINGS",
+  "note": "Capture completion does not mean native renderer, Windows or hardware validation."
+}

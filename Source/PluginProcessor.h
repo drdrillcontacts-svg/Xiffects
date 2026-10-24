@@ -1,5 +1,14 @@
 #pragma once
 #include <JuceHeader.h>
+#include "DSP/Effects.h"
+#include "DSP/Pitch.h"
+#include "DSP/LivePitchBank.h"
+#include "DSP/TempoDelay.h"
+#include "DSP/ReverbBank.h"
+#ifndef XIFFECTS_LIVE_MODE
+#define XIFFECTS_LIVE_MODE 0
+#endif
+#include "Telemetry.h"
 
 class XiffectsAudioProcessor final : public juce::AudioProcessor
 {
@@ -15,11 +24,12 @@ public:
     juce::AudioProcessorEditor* createEditor() override;
     bool hasEditor() const override { return true; }
 
-    const juce::String getName() const override { return "Xiffects"; }
+    static constexpr bool isLiveMode() { return XIFFECTS_LIVE_MODE != 0; }
+    const juce::String getName() const override { return isLiveMode()?"Xiffects Live":"Xiffects"; }
     bool acceptsMidi() const override { return false; }
     bool producesMidi() const override { return false; }
     bool isMidiEffect() const override { return false; }
-    double getTailLengthSeconds() const override { return 4.0; }
+    double getTailLengthSeconds() const override { return 300.0; }
 
     int getNumPrograms() override { return 1; }
     int getCurrentProgram() override { return 0; }
@@ -30,11 +40,42 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
+    std::atomic<float> tempoBpm {120};
+    std::atomic<bool> tempoFromHost {false};
+    std::atomic<float> inputPeak {0}, outputPeak {0};
+    xiffects::TelemetryQueue telemetry;
+
     using APVTS = juce::AudioProcessorValueTreeState;
     APVTS parameters;
     static APVTS::ParameterLayout createParameterLayout();
+    static const juce::Array<juce::var>& factoryPresets();
+    void loadFactoryPreset(int index);
+    int selectedScale() const;
+    static juce::ValueTree migrateState(juce::ValueTree state);
 
 private:
-    juce::AudioBuffer<float> dryBuffer;
+    enum Control { compOn, revOn, delayOn, distOn, eqOn, phaserOn,
+        threshold, ratio, makeup, revMix, revSize, decay, delayMix, delayTime,
+        feedback, drive, tone, distMix, low, mid, high, air, rate, depth,
+        phaserFeedback, output, power, octOn, octMix, octShift, pitchOn, pitchMix, pitchShift,
+        tuneOn, tuneStrength, tuneSpeed, tuneMix, tuneKey, tuneScale, controlCount };
+    std::array<std::atomic<float>*, controlCount> values{};
+    std::array<xiffects::Smoother, controlCount> smooth;
+    std::array<std::atomic<float>*,12> noteValues{};
+    std::atomic<float>* extendedScale=nullptr;
+    std::atomic<float> *delaySync=nullptr,*delayDivision=nullptr,*reverbMode=nullptr;
+    xiffects::PitchCorrection correction;
+    xiffects::LivePitchBank livePitch;
+    xiffects::PitchShifter tuneShifter, octaveShifter, pitchShifter;
+    std::array<std::vector<float>,2> bypassDelay;
+    size_t bypassPosition=0;
+    int telemetryCounter=0;
+    float waveformMin=0, waveformMax=0;
+    xiffects::Compressor compressor;
+    xiffects::Delay delay;
+    xiffects::Distortion distortion;
+    xiffects::Equalizer equalizer;
+    xiffects::Phaser phaser;
+    xiffects::ReverbBank reverb;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (XiffectsAudioProcessor)
 };
