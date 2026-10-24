@@ -1,0 +1,96 @@
+UpdateCTestConfiguration  from :/home/user/Xiffects/build-live-tests/DartConfiguration.tcl
+Parse Config file:/home/user/Xiffects/build-live-tests/DartConfiguration.tcl
+Test project /home/user/Xiffects/build-live-tests
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 1
+    Start 1: DSP
+
+1: Test command: /home/user/Xiffects/build-live-tests/XiffectsDSPTests
+1: Working Directory: /home/user/Xiffects/build-live-tests
+1: Test timeout computed to be: 1500
+1: DSP tests passed at 44.1, 48 and 96 kHz
+1/6 Test #1: DSP ..............................   Passed    0.17 sec
+test 2
+    Start 2: Pitch
+
+2: Test command: /home/user/Xiffects/build-live-tests/XiffectsPitchTests
+2: Working Directory: /home/user/Xiffects/build-live-tests
+2: Test timeout computed to be: 1500
+2: 44100 ratio 0.25 measured 109.9 expected 110
+2: 44100 ratio 0.5 measured 219.8 expected 220
+2: 44100 ratio 1.05946 measured 466.194 expected 466.164
+2: 44100 ratio 2 measured 880.2 expected 880
+2: 44100 ratio 4 measured 1759.9 expected 1760
+2: 48000 ratio 0.25 measured 109.9 expected 110
+2: 48000 ratio 0.5 measured 219.8 expected 220
+2: 48000 ratio 1.05946 measured 466.194 expected 466.164
+2: 48000 ratio 2 measured 880.2 expected 880
+2: 48000 ratio 4 measured 1759.9 expected 1760
+2: 96000 ratio 0.25 measured 109.9 expected 110
+2: 96000 ratio 0.5 measured 219.8 expected 220
+2: 96000 ratio 1.05946 measured 466.194 expected 466.164
+2: 96000 ratio 2 measured 880.2 expected 880
+2: 96000 ratio 4 measured 1759.9 expected 1760
+2: Pitch detection, shift, correction and latency tests passed
+2/6 Test #2: Pitch ............................   Passed    1.40 sec
+test 3
+    Start 3: Onset
+
+3: Test command: /home/user/Xiffects/build-live-tests/XiffectsOnsetTests
+3: Working Directory: /home/user/Xiffects/build-live-tests
+3: Test timeout computed to be: 1500
+3: 44100,452Hz,onset5ms,applied=69.0002,audio=439.935,jump=0.0129574
+3: 48000,452Hz,onset5ms,applied=69.0004,audio=439.897,jump=0.0119057
+3: 96000,452Hz,onset5ms,applied=69.0004,audio=439.848,jump=0.00596132
+3: Onset envelope, reacquisition, hysteresis and mask checks passed
+3/6 Test #3: Onset ............................   Passed    0.88 sec
+test 4
+    Start 4: LivePitch
+
+4: Test command: /home/user/Xiffects/build-live-tests/XiffectsLivePitchTests
+4: Working Directory: /home/user/Xiffects/build-live-tests
+4: Test timeout computed to be: 1500
+4: sr=44100 live_samples=531 live_ms=12.0408 studio_ms=60.0907
+4: input=100 actual=97.6566 target=97.9988
+4: input=146.83 actual=146.825 target=146.832
+4: input=452 actual=439.936 target=440
+4: input=880 actual=879.065 target=880
+4: input=1396.91 actual=1395.33 target=1396.91
+4: sr=48000 live_samples=578 live_ms=12.0417 studio_ms=60.0833
+4: input=100 actual=97.5796 target=97.9988
+4: input=146.83 actual=146.824 target=146.832
+4: input=452 actual=439.891 target=440
+4: input=880 actual=878.959 target=880
+4: input=1396.91 actual=1394.29 target=1396.91
+4: sr=96000 live_samples=1154 live_ms=12.0208 studio_ms=60.0417
+4: input=100 actual=97.5813 target=97.9988
+4: input=146.83 actual=146.824 target=146.832
+4: input=452 actual=439.884 target=440
+4: input=880 actual=878.959 target=880
+4: input=1396.91 actual=1394.31 target=1396.91
+4/6 Test #4: LivePitch ........................   Passed    0.32 sec
+test 5
+    Start 5: CorrectionRegression
+
+5: Test command: /home/user/Xiffects/build-live-tests/XiffectsCorrectionRegressionTests
+5: Working Directory: /home/user/Xiffects/build-live-tests
+5: Test timeout computed to be: 1500
+5: Detector bounds and sample-wise correction regression passed
+5/6 Test #5: CorrectionRegression .............   Passed    0.11 sec
+test 6
+    Start 6: Realtime
+
+6: Test command: /home/user/Xiffects/build-live-tests/XiffectsRealtimeTests
+6: Working Directory: /home/user/Xiffects/build-live-tests
+6: Test timeout computed to be: 1500
+6: Zero DSP allocations; concurrent telemetry test passed
+6/6 Test #6: Realtime .........................   Passed    0.04 sec
+
+100% tests passed out of 6
+
+Total Test time (real) =   2.91 sec

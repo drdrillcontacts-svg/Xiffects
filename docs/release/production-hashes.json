@@ -1,0 +1,18 @@
+{
+  "production_commit": "a4b6b0e",
+  "sha256": {
+    "Assets/README.md": "8b6c23508629f7386ae29c1eeac849040e3feafc6c09670a8055f7975cadd29c",
+    "Assets/factory_presets.json": "5c4cb50446eb2b7fb223467474cd6b86bab442181562943cae893795c4170652",
+    "Assets/hero.jpg": "4075e42456f6429672b15d2d5460d2b1147ec57db4fc7c8eeba6984d104b3248",
+    "Source/DSP/Effects.h": "47971c4dd31d8c2eb4a6cf70fe0f87cb1c459f57f7c4f9597c4ecc1e8e8421c1",
+    "Source/DSP/LivePitchBank.h": "6e258f9dead40f465da36222d66fca28d7c7b1c852147784a7ad47b8bf98c552",
+    "Source/DSP/Pitch.h": "5acf5b59b685717d04dc15d3508c3ebbc2d7b036a275b841cfa69f20cbf52c58",
+    "Source/DSP/Scales.h": "87b5b9f92208195f176036458eec5e85f6bcee7925c6171a687b462443168cbb",
+    "Source/PluginEditor.cpp": "ebdc11f4dfefcb36aec237b5d3ec8158746e8f5d4e0fde453e69dadb0ccf2b2c",
+    "Source/PluginEditor.h": "259b79f37f90f192e5efdbb8ec47b1c58e168bb6202758336a1800fddaa5f495",
+    "Source/PluginProcessor.cpp": "8ad0012a3fdd8485c904d7381f8d60ba0b0266ac9b69ff73acfd3c06a9f4dd80",
+    "Source/PluginProcessor.h": "3c81c59f807aee5b869f7d787f5033d1ef4d4aec1c96a400d6af5e57d6f93288",
+    "Source/Telemetry.h": "696f5275ae0f071dd7760ab7f446e8bc275247b67b2733f7044cb020059d62bf",
+    "Source/UI/Controls.h": "f50f7ad02c6a47016ce228d1b61dcf9c62a60d9e57d9bdb7fe562463a4aa5528"
+  }
+}

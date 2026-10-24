@@ -1,0 +1,15 @@
+ M .github/workflows/build.yml
+ M CMakeLists.txt
+ M README.md
+ M Source/PluginEditor.cpp
+ M Source/PluginEditor.h
+ M Source/PluginProcessor.cpp
+ M Source/PluginProcessor.h
+?? .gitignore
+?? Assets/
+?? Source/DSP/
+?? Source/Telemetry.h
+?? Source/UI/
+?? Tests/
+?? Tools/
+?? docs/

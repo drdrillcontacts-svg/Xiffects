@@ -1,0 +1,12 @@
+{
+  "Assets/README.md": true,
+  "Assets/hero.jpg": true,
+  "Source/DSP/Effects.h": true,
+  "Source/DSP/Pitch.h": true,
+  "Source/PluginEditor.cpp": true,
+  "Source/PluginEditor.h": true,
+  "Source/PluginProcessor.cpp": true,
+  "Source/PluginProcessor.h": true,
+  "Source/Telemetry.h": true,
+  "Source/UI/Controls.h": true
+}

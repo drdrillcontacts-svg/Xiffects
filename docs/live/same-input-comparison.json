@@ -1,0 +1,40 @@
+{
+  "identical_inputs_and_parameters": 48,
+  "hardware_measured": false,
+  "note": "Output threshold indices are absolute file positions, not hardware latency. Wet grain read positions vary around nominal delay.",
+  "rows": [
+    {
+      "id": "detuned_452_44100",
+      "input_sha256": "205ac55481c777be81f1b25920aa4bf9a192434b7ac900b743ea85970919ecba",
+      "studio_nominal_samples": 2650,
+      "live_nominal_samples": 531,
+      "studio_output_first_over_1e_minus_5_sample": 7061,
+      "live_output_first_over_1e_minus_5_sample": 4942,
+      "studio_output_hz": 439.9349198936711,
+      "live_output_hz": 439.936798795312
+    },
+    {
+      "id": "detuned_452_48000",
+      "input_sha256": "d289a5997a7356bafbc5aa909f8670f6f48444451254fe4d41d7afec269c3de9",
+      "studio_nominal_samples": 2884,
+      "live_nominal_samples": 578,
+      "studio_output_first_over_1e_minus_5_sample": 7684,
+      "live_output_first_over_1e_minus_5_sample": 5379,
+      "studio_output_hz": 439.8975758408909,
+      "live_output_hz": 439.8899252744439
+    },
+    {
+      "id": "detuned_452_96000",
+      "input_sha256": "2ca081d6a882278c21b298d955658326b5ac68b683962a152211e68787efca8d",
+      "studio_nominal_samples": 5764,
+      "live_nominal_samples": 1154,
+      "studio_output_first_over_1e_minus_5_sample": 15364,
+      "live_output_first_over_1e_minus_5_sample": 10755,
+      "studio_output_hz": 439.8462527531198,
+      "live_output_hz": 439.8896604608816
+    }
+  ],
+  "studio_deadline_exceedances": 28,
+  "live_deadline_exceedances": 1,
+  "live_clipped_samples": 0
+}

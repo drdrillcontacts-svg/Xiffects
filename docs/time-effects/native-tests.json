@@ -1,0 +1,34 @@
+[
+  {
+    "path": "downloaded/Tests-windows-latest/tests.xml",
+    "passed": [
+      "TuneQuality",
+      "TimeEffects",
+      "Scales",
+      "DSP",
+      "Pitch",
+      "Onset",
+      "LivePitch",
+      "CorrectionRegression",
+      "Realtime",
+      "Host",
+      "LiveHost"
+    ]
+  },
+  {
+    "path": "downloaded/Tests-macos-14/tests.xml",
+    "passed": [
+      "TuneQuality",
+      "TimeEffects",
+      "Scales",
+      "DSP",
+      "Pitch",
+      "Onset",
+      "LivePitch",
+      "CorrectionRegression",
+      "Realtime",
+      "Host",
+      "LiveHost"
+    ]
+  }
+]

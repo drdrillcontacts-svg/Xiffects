@@ -1,0 +1,3 @@
+44100,452Hz,onset5ms,applied=70.0002,audio=466.1,jump=0.0132813
+48000,452Hz,onset5ms,applied=70.0004,audio=466.055,jump=0.0122097
+96000,452Hz,onset5ms,applied=70.0004,audio=466.04,jump=0.00610569

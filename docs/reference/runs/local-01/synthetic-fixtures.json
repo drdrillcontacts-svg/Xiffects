@@ -1,0 +1,486 @@
+{
+  "generated_manifest_sha256": "7a76b25baceab8b6bbae17bb0923930de47fd341dda0c4095c1d1a2f309a96e5",
+  "entries": [
+    {
+      "id": "silence_44100",
+      "file": "silence_44100.wav",
+      "sample_rate": 44100,
+      "channels": 1,
+      "samples": 57330,
+      "kind": "unvoiced",
+      "provenance": "synthetic generated mathematics; no performance recording",
+      "sha256": "ec1371e6b91afa99ee9fdf530002833960fba01efb0c7a007c049cd2efde615f"
+    },
+    {
+      "id": "noise_44100",
+      "file": "noise_44100.wav",
+      "sample_rate": 44100,
+      "channels": 1,
+      "samples": 57330,
+      "kind": "unvoiced",
+      "provenance": "synthetic generated mathematics; no performance recording",
+      "sha256": "c14911f61269a7e24d3370822be85e51a6591e083693db51e7393f8acb38137e"
+    },
+    {
+      "id": "sine_100_44100",
+      "file": "sine_100_44100.wav",
+      "sample_rate": 44100,
+      "channels": 1,
+      "samples": 57330,
+      "kind": "sine",
+      "provenance": "synthetic generated mathematics; no performance recording",
+      "sha256": "e925d09b665540391aa4eed874676bbc11d8aeca8377bcf2bc0ea51a2c179c90"
+    },
+    {
+      "id": "sine_146_44100",
+      "file": "sine_146_44100.wav",
+      "sample_rate": 44100,
+      "channels": 1,
+      "samples": 57330,
+      "kind": "sine",
+      "provenance": "synthetic generated mathematics; no performance recording",
+      "sha256": "2e7e4cc98e652f7eeb8d229348bb5d022639435b5e01c97a6e19c33d0c3127fe"
+    },
+    {
+      "id": "sine_440_44100",
+      "file": "sine_440_44100.wav",
+      "sample_rate": 44100,
+      "channels": 1,
+      "samples": 57330,
+      "kind": "sine",
+      "provenance": "synthetic generated mathematics; no performance recording",
+      "sha256": "37ac812ebd54d3cb58ca0e038d31111ba3207da1fe0237c29a3dc7d424bfa758"
+    },
+    {
+      "id": "detuned_452_44100",
+      "file": "detuned_452_44100.wav",
+      "sample_rate": 44100,
+      "channels": 1,
+      "samples": 57330,
+      "kind": "sine",
+      "provenance": "synthetic generated mathematics; no performance recording",
+      "sha256": "205ac55481c777be81f1b25920aa4bf9a192434b7ac900b743ea85970919ecba"
+    },
+    {
+      "id": "sine_880_44100",
+      "file": "sine_880_44100.wav",
+      "sample_rate": 44100,
+      "channels": 1,
+      "samples": 57330,
+      "kind": "sine",
+      "provenance": "synthetic generated mathematics; no performance recording",
+      "sha256": "3ac4d05e4350b8be21a751736ee43db9d87f61b16be8e1c562fb0a40623385be"
+    },
+    {
+      "id": "sine_1397_44100",
+      "file": "sine_1397_44100.wav",
+      "sample_rate": 44100,
+      "channels": 1,
+      "samples": 57330,
+      "kind": "sine",
+      "provenance": "synthetic generated mathematics; no performance recording",
+      "sha256": "e8f411a07445d843056438c1534633a3e3b04de189caf123c55f2e7a99264f7e"
+    },
+    {
+      "id": "sine_1600_44100",
+      "file": "sine_1600_44100.wav",
+      "sample_rate": 44100,
+      "channels": 1,
+      "samples": 57330,
+      "kind": "sine",
+      "provenance": "synthetic generated mathematics; no performance recording",
+      "sha256": "70fbdc917a8383284fe5d03d558bca571a08265c78974536e627666ee07c2524"
+    },
+    {
+      "id": "below_range_82_44100",
+      "file": "below_range_82_44100.wav",
+      "sample_rate": 44100,
+      "channels": 1,
+      "samples": 57330,
+      "kind": "out_of_range",
+      "provenance": "synthetic generated mathematics; no performance recording",
+      "sha256": "c216cd7b343e640caf5b9718b23866c02096bae3f61526954552d2cf0f09777b"
+    },
+    {
+      "id": "above_range_1700_44100",
+      "file": "above_range_1700_44100.wav",
+      "sample_rate": 44100,
+      "channels": 1,
+      "samples": 57330,
+      "kind": "out_of_range",
+      "provenance": "synthetic generated mathematics; no performance recording",
+      "sha256": "177306f05b44d80f4341c6c21e168c5838d81cf54e4b6f808f591bd577b5800a"
+    },
+    {
+      "id": "harmonic_sax_proxy_44100",
+      "file": "harmonic_sax_proxy_44100.wav",
+      "sample_rate": 44100,
+      "channels": 1,
+      "samples": 57330,
+      "kind": "harmonic_proxy",
+      "provenance": "synthetic generated mathematics; no performance recording",
+      "sha256": "260fed200c17c579be2453b481cd3113d89154c86c8d3f7e769fc21c152dbbda"
+    },
+    {
+      "id": "harmonic_voice_proxy_44100",
+      "file": "harmonic_voice_proxy_44100.wav",
+      "sample_rate": 44100,
+      "channels": 1,
+      "samples": 57330,
+      "kind": "harmonic_proxy",
+      "provenance": "synthetic generated mathematics; no performance recording",
+      "sha256": "461c349c75ca00911d34f66b86a613b6f853422e581274c34dca6dc5ddad8b7b"
+    },
+    {
+      "id": "note_step_44100",
+      "file": "note_step_44100.wav",
+      "sample_rate": 44100,
+      "channels": 1,
+      "samples": 57330,
+      "kind": "step",
+      "provenance": "synthetic generated mathematics; no performance recording",
+      "sha256": "0a457530a64088bbe37adae9c9203475a6966f1ad6e2133225db7153abc4aa10"
+    },
+    {
+      "id": "glide_44100",
+      "file": "glide_44100.wav",
+      "sample_rate": 44100,
+      "channels": 1,
+      "samples": 57330,
+      "kind": "glide",
+      "provenance": "synthetic generated mathematics; no performance recording",
+      "sha256": "57b6896e6e5288853a23824089bd57b6d279b84033fd0137f9eb5a06ff54afea"
+    },
+    {
+      "id": "vibrato_44100",
+      "file": "vibrato_44100.wav",
+      "sample_rate": 44100,
+      "channels": 1,
+      "samples": 57330,
+      "kind": "vibrato",
+      "provenance": "synthetic generated mathematics; no performance recording",
+      "sha256": "6a52aa82f3023dd3ef28b2a8afb1d90800429e9202455dc6667b3c6b5744776d"
+    },
+    {
+      "id": "silence_48000",
+      "file": "silence_48000.wav",
+      "sample_rate": 48000,
+      "channels": 1,
+      "samples": 62400,
+      "kind": "unvoiced",
+      "provenance": "synthetic generated mathematics; no performance recording",
+      "sha256": "8a2089e29967d8fad98382f6f41243fba7cbff9e401669a4bfbc806c98fabc08"
+    },
+    {
+      "id": "noise_48000",
+      "file": "noise_48000.wav",
+      "sample_rate": 48000,
+      "channels": 1,
+      "samples": 62400,
+      "kind": "unvoiced",
+      "provenance": "synthetic generated mathematics; no performance recording",
+      "sha256": "d89c41cf0c67e0b8b3b51d0040166bfacd119d5dc4597ccfdffe9349003d3d06"
+    },
+    {
+      "id": "sine_100_48000",
+      "file": "sine_100_48000.wav",
+      "sample_rate": 48000,
+      "channels": 1,
+      "samples": 62400,
+      "kind": "sine",
+      "provenance": "synthetic generated mathematics; no performance recording",
+      "sha256": "b8a6336c4e8a67fadee1ef925bfac3e7079a0d1459cc192029b6874ae8658351"
+    },
+    {
+      "id": "sine_146_48000",
+      "file": "sine_146_48000.wav",
+      "sample_rate": 48000,
+      "channels": 1,
+      "samples": 62400,
+      "kind": "sine",
+      "provenance": "synthetic generated mathematics; no performance recording",
+      "sha256": "b7aa054a5ed2e499467cef41e7b12edc0c013590bc115974af544a7e14bf7576"
+    },
+    {
+      "id": "sine_440_48000",
+      "file": "sine_440_48000.wav",
+      "sample_rate": 48000,
+      "channels": 1,
+      "samples": 62400,
+      "kind": "sine",
+      "provenance": "synthetic generated mathematics; no performance recording",
+      "sha256": "d88b01cdce17cee5be2622ad6761b76936a94f771588cb3fb22d44d7e0b3c8c1"
+    },
+    {
+      "id": "detuned_452_48000",
+      "file": "detuned_452_48000.wav",
+      "sample_rate": 48000,
+      "channels": 1,
+      "samples": 62400,
+      "kind": "sine",
+      "provenance": "synthetic generated mathematics; no performance recording",
+      "sha256": "d289a5997a7356bafbc5aa909f8670f6f48444451254fe4d41d7afec269c3de9"
+    },
+    {
+      "id": "sine_880_48000",
+      "file": "sine_880_48000.wav",
+      "sample_rate": 48000,
+      "channels": 1,
+      "samples": 62400,
+      "kind": "sine",
+      "provenance": "synthetic generated mathematics; no performance recording",
+      "sha256": "e110f85ddbcc7045509fd9c7f3e204f67eea73e350f2339707876736ab140acd"
+    },
+    {
+      "id": "sine_1397_48000",
+      "file": "sine_1397_48000.wav",
+      "sample_rate": 48000,
+      "channels": 1,
+      "samples": 62400,
+      "kind": "sine",
+      "provenance": "synthetic generated mathematics; no performance recording",
+      "sha256": "187decdf2950cc96f79c2d47c95fbfde7ab1a0ff17755675670062992c807265"
+    },
+    {
+      "id": "sine_1600_48000",
+      "file": "sine_1600_48000.wav",
+      "sample_rate": 48000,
+      "channels": 1,
+      "samples": 62400,
+      "kind": "sine",
+      "provenance": "synthetic generated mathematics; no performance recording",
+      "sha256": "55f8476ae2aafbd36f1f12b263306f4aa899e28a203ccbecb67c7822baaeba48"
+    },
+    {
+      "id": "below_range_82_48000",
+      "file": "below_range_82_48000.wav",
+      "sample_rate": 48000,
+      "channels": 1,
+      "samples": 62400,
+      "kind": "out_of_range",
+      "provenance": "synthetic generated mathematics; no performance recording",
+      "sha256": "d995a17695792aad114d5e2418c0947a08440b8ecb9420851eac3128b9ea144d"
+    },
+    {
+      "id": "above_range_1700_48000",
+      "file": "above_range_1700_48000.wav",
+      "sample_rate": 48000,
+      "channels": 1,
+      "samples": 62400,
+      "kind": "out_of_range",
+      "provenance": "synthetic generated mathematics; no performance recording",
+      "sha256": "e825893d18d34a3341d2e99067233a9fd87cf1fba15a8dca5baf9eb60a30e2bf"
+    },
+    {
+      "id": "harmonic_sax_proxy_48000",
+      "file": "harmonic_sax_proxy_48000.wav",
+      "sample_rate": 48000,
+      "channels": 1,
+      "samples": 62400,
+      "kind": "harmonic_proxy",
+      "provenance": "synthetic generated mathematics; no performance recording",
+      "sha256": "2b3da7c92b793c12344a76a7a5d46040f3db2617684f66a9c9d4b49eb36539bf"
+    },
+    {
+      "id": "harmonic_voice_proxy_48000",
+      "file": "harmonic_voice_proxy_48000.wav",
+      "sample_rate": 48000,
+      "channels": 1,
+      "samples": 62400,
+      "kind": "harmonic_proxy",
+      "provenance": "synthetic generated mathematics; no performance recording",
+      "sha256": "8250ad66e225e04b15f71a2031beddb0ea8ab9b5b134885565725d66191059e8"
+    },
+    {
+      "id": "note_step_48000",
+      "file": "note_step_48000.wav",
+      "sample_rate": 48000,
+      "channels": 1,
+      "samples": 62400,
+      "kind": "step",
+      "provenance": "synthetic generated mathematics; no performance recording",
+      "sha256": "713e60b4ea829d6681b77627a02afd061c8901074f78a653bc51cc12aa9abae9"
+    },
+    {
+      "id": "glide_48000",
+      "file": "glide_48000.wav",
+      "sample_rate": 48000,
+      "channels": 1,
+      "samples": 62400,
+      "kind": "glide",
+      "provenance": "synthetic generated mathematics; no performance recording",
+      "sha256": "44beeef96888ab7c338ab70a55b8772bdf50393058c63e6593e87fde74e9cbf4"
+    },
+    {
+      "id": "vibrato_48000",
+      "file": "vibrato_48000.wav",
+      "sample_rate": 48000,
+      "channels": 1,
+      "samples": 62400,
+      "kind": "vibrato",
+      "provenance": "synthetic generated mathematics; no performance recording",
+      "sha256": "16809baa8db89b444327f33b4a34771641c266d34cd76e8412f5fd390aebbace"
+    },
+    {
+      "id": "silence_96000",
+      "file": "silence_96000.wav",
+      "sample_rate": 96000,
+      "channels": 1,
+      "samples": 124800,
+      "kind": "unvoiced",
+      "provenance": "synthetic generated mathematics; no performance recording",
+      "sha256": "002dffd95b363bf65429707d4619d25334190e6b3b275bebaea5d1aff83502d4"
+    },
+    {
+      "id": "noise_96000",
+      "file": "noise_96000.wav",
+      "sample_rate": 96000,
+      "channels": 1,
+      "samples": 124800,
+      "kind": "unvoiced",
+      "provenance": "synthetic generated mathematics; no performance recording",
+      "sha256": "ea35ffac941db0d33ec989262b36120e6e02d3b335eaa12754873493a0228d05"
+    },
+    {
+      "id": "sine_100_96000",
+      "file": "sine_100_96000.wav",
+      "sample_rate": 96000,
+      "channels": 1,
+      "samples": 124800,
+      "kind": "sine",
+      "provenance": "synthetic generated mathematics; no performance recording",
+      "sha256": "9fb61f1da9029ed087341deb9610db55141e1916a1c434c549951e671c016e75"
+    },
+    {
+      "id": "sine_146_96000",
+      "file": "sine_146_96000.wav",
+      "sample_rate": 96000,
+      "channels": 1,
+      "samples": 124800,
+      "kind": "sine",
+      "provenance": "synthetic generated mathematics; no performance recording",
+      "sha256": "826027d1753ba6604cfdacf3e35b2f57224a5a8a283cf611aa2a00a3a9ed1879"
+    },
+    {
+      "id": "sine_440_96000",
+      "file": "sine_440_96000.wav",
+      "sample_rate": 96000,
+      "channels": 1,
+      "samples": 124800,
+      "kind": "sine",
+      "provenance": "synthetic generated mathematics; no performance recording",
+      "sha256": "6e90ace77c19819946055dd61d713b5ccfbf8feaa44667990e69dc0352f9297a"
+    },
+    {
+      "id": "detuned_452_96000",
+      "file": "detuned_452_96000.wav",
+      "sample_rate": 96000,
+      "channels": 1,
+      "samples": 124800,
+      "kind": "sine",
+      "provenance": "synthetic generated mathematics; no performance recording",
+      "sha256": "2ca081d6a882278c21b298d955658326b5ac68b683962a152211e68787efca8d"
+    },
+    {
+      "id": "sine_880_96000",
+      "file": "sine_880_96000.wav",
+      "sample_rate": 96000,
+      "channels": 1,
+      "samples": 124800,
+      "kind": "sine",
+      "provenance": "synthetic generated mathematics; no performance recording",
+      "sha256": "e435a5835e54626aca1fe55a0f4b5ae27b45c1e9cd337c9071ad04b8807857ba"
+    },
+    {
+      "id": "sine_1397_96000",
+      "file": "sine_1397_96000.wav",
+      "sample_rate": 96000,
+      "channels": 1,
+      "samples": 124800,
+      "kind": "sine",
+      "provenance": "synthetic generated mathematics; no performance recording",
+      "sha256": "31784eb4b7b1f03fce140fdc94d7aaa416897ba2925cad1746f5fec529eab90f"
+    },
+    {
+      "id": "sine_1600_96000",
+      "file": "sine_1600_96000.wav",
+      "sample_rate": 96000,
+      "channels": 1,
+      "samples": 124800,
+      "kind": "sine",
+      "provenance": "synthetic generated mathematics; no performance recording",
+      "sha256": "6706c9242e1fe19baa820e072309b93b93c3f7c20c327210c3bd2e3f6fa5ee4c"
+    },
+    {
+      "id": "below_range_82_96000",
+      "file": "below_range_82_96000.wav",
+      "sample_rate": 96000,
+      "channels": 1,
+      "samples": 124800,
+      "kind": "out_of_range",
+      "provenance": "synthetic generated mathematics; no performance recording",
+      "sha256": "e096c11d1fad01136285131da06f9b3014363899fb1a1044ad5798815500b93f"
+    },
+    {
+      "id": "above_range_1700_96000",
+      "file": "above_range_1700_96000.wav",
+      "sample_rate": 96000,
+      "channels": 1,
+      "samples": 124800,
+      "kind": "out_of_range",
+      "provenance": "synthetic generated mathematics; no performance recording",
+      "sha256": "ea9b66dcb360f35290fde86adad9dffd4dab03f4711a829f5b3279180faf2714"
+    },
+    {
+      "id": "harmonic_sax_proxy_96000",
+      "file": "harmonic_sax_proxy_96000.wav",
+      "sample_rate": 96000,
+      "channels": 1,
+      "samples": 124800,
+      "kind": "harmonic_proxy",
+      "provenance": "synthetic generated mathematics; no performance recording",
+      "sha256": "8234bee3372975981324f69f8cd3212a4ad9a7d4983ce8e2e021513e756c0d8a"
+    },
+    {
+      "id": "harmonic_voice_proxy_96000",
+      "file": "harmonic_voice_proxy_96000.wav",
+      "sample_rate": 96000,
+      "channels": 1,
+      "samples": 124800,
+      "kind": "harmonic_proxy",
+      "provenance": "synthetic generated mathematics; no performance recording",
+      "sha256": "b52b66724ddfe9cab781623448b2b6f771ff1a7dc540cc6e69bbd7a433e43f3f"
+    },
+    {
+      "id": "note_step_96000",
+      "file": "note_step_96000.wav",
+      "sample_rate": 96000,
+      "channels": 1,
+      "samples": 124800,
+      "kind": "step",
+      "provenance": "synthetic generated mathematics; no performance recording",
+      "sha256": "b876ea6b8349f40cf9a270412531ddb09942399e7afa3370aa88a11c3076cd36"
+    },
+    {
+      "id": "glide_96000",
+      "file": "glide_96000.wav",
+      "sample_rate": 96000,
+      "channels": 1,
+      "samples": 124800,
+      "kind": "glide",
+      "provenance": "synthetic generated mathematics; no performance recording",
+      "sha256": "b46bae0669bc018aae39736d179807e6385d377a26625e88b85fb5cdf46dd372"
+    },
+    {
+      "id": "vibrato_96000",
+      "file": "vibrato_96000.wav",
+      "sample_rate": 96000,
+      "channels": 1,
+      "samples": 124800,
+      "kind": "vibrato",
+      "provenance": "synthetic generated mathematics; no performance recording",
+      "sha256": "f7d46dccec38bea70a3e09796293c486cb5fc903a7f8bafd18618d0cc5ee7dcc"
+    }
+  ],
+  "full_truth": "Regenerate build-reference-fixtures/manifest.json"
+}

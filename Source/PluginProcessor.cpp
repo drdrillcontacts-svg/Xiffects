@@ -1,5 +1,6 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+#include <BinaryData.h>
 
 XiffectsAudioProcessor::XiffectsAudioProcessor()
     : AudioProcessor (BusesProperties()
@@ -7,6 +8,19 @@ XiffectsAudioProcessor::XiffectsAudioProcessor()
         .withOutput ("Output", juce::AudioChannelSet::stereo(), true)),
       parameters (*this, nullptr, "XIFfectsState", createParameterLayout())
 {
+    delaySync=parameters.getRawParameterValue("DLY_SYNC");
+    delayDivision=parameters.getRawParameterValue("DLY_DIVISION");
+    reverbMode=parameters.getRawParameterValue("REV_MODE");
+    extendedScale=parameters.getRawParameterValue("TUNE_SCALE_EXT");
+    const char* ids[] = {"COMP_ON","REV_ON","DLY_ON","DIST_ON","EQ_ON","PHASER_ON",
+        "COMP_THRESHOLD","COMP_RATIO","COMP_MAKEUP","REV_MIX","REV_SIZE","REV_DECAY",
+        "DLY_MIX","DLY_TIME","DLY_FEEDBACK","DIST_DRIVE","DIST_TONE","DIST_MIX",
+        "EQ_LOW","EQ_MID","EQ_HIGH","EQ_AIR","PHASER_RATE","PHASER_DEPTH",
+        "PHASER_FEEDBACK","OUTPUT","POWER","OCT_ON","OCT_MIX","OCT_SHIFT",
+        "PITCH_ON","PITCH_MIX","PITCH_SEMITONES","TUNE_ON","TUNE_STRENGTH",
+        "TUNE_SPEED","TUNE_MIX","TUNE_KEY","TUNE_SCALE"};
+    for (size_t i=0; i<values.size(); ++i) values[i]=parameters.getRawParameterValue(ids[i]);
+    for(size_t i=0;i<noteValues.size();++i) noteValues[i]=parameters.getRawParameterValue("TUNE_NOTE_"+juce::String(int(i)));
 }
 
 XiffectsAudioProcessor::APVTS::ParameterLayout XiffectsAudioProcessor::createParameterLayout()
@@ -59,6 +73,7 @@ XiffectsAudioProcessor::APVTS::ParameterLayout XiffectsAudioProcessor::createPar
     addFloat("TUNE_STRENGTH", "Correction Strength", 0, 100, 26);
     addFloat("TUNE_SPEED", "Retune Speed", 1, 100, 12);
     addFloat("TUNE_MIX", "Auto Tune Mix", 0, 100, 70);
+    addBool("POWER", "Processing Enabled", true);
     addFloat("OUTPUT", "Output", -24, 12, 0);
     // Auto Tune key/scale and manually allowed notes are stored as parameters for host automation.
     layout.add(std::make_unique<juce::AudioParameterChoice>(
@@ -67,15 +82,33 @@ XiffectsAudioProcessor::APVTS::ParameterLayout XiffectsAudioProcessor::createPar
     layout.add(std::make_unique<juce::AudioParameterChoice>(
         juce::ParameterID{"TUNE_SCALE", 1}, "Auto Tune Scale",
         juce::StringArray{"Chromatic","Major","Minor","Harmonic Minor","Melodic Minor","Dorian","Mixolydian","Pentatonic"}, 1));
+    juce::StringArray extensions {"Use legacy scale"};
+    for(size_t i=8;i<xiffects::scales.size();++i) extensions.add(xiffects::scales[i].name);
+    layout.add(std::make_unique<juce::AudioParameterChoice>(juce::ParameterID{"TUNE_SCALE_EXT",1},"Extended Scale",extensions,0));
     for (int n = 0; n < 12; ++n)
         addBool ((juce::String("TUNE_NOTE_") + juce::String(n)).toRawUTF8(),
                  (juce::String("Allow Note ") + juce::String(n)).toRawUTF8(), true);
+    addBool("DLY_SYNC","Delay Tempo Sync",false);
+    juce::StringArray divisions;for(auto* name:xiffects::delayDivisionNames)divisions.add(name);
+    layout.add(std::make_unique<juce::AudioParameterChoice>(juce::ParameterID{"DLY_DIVISION",1},"Delay Division",divisions,5));
+    layout.add(std::make_unique<juce::AudioParameterChoice>(juce::ParameterID{"REV_MODE",1},"Reverb Character",juce::StringArray{"Room","Hall","Plate","Chamber"},0));
     return layout;
 }
 
-void XiffectsAudioProcessor::prepareToPlay (double, int samplesPerBlock)
+void XiffectsAudioProcessor::prepareToPlay (double sampleRate, int)
 {
-    dryBuffer.setSize (getTotalNumOutputChannels(), samplesPerBlock);
+    correction.prepare(sampleRate); tuneShifter.prepare(sampleRate);
+    octaveShifter.prepare(sampleRate); pitchShifter.prepare(sampleRate);
+    if(isLiveMode()) livePitch.prepare(sampleRate);
+    const int latency=isLiveMode()?livePitch.latency():tuneShifter.latency()+octaveShifter.latency();
+    setLatencySamples(latency);
+    for(auto& channel:bypassDelay) channel.assign(size_t(latency),0);
+    bypassPosition=0; telemetryCounter=0; waveformMin=waveformMax=0;
+    compressor.prepare(sampleRate); delay.prepare(sampleRate,4.1);
+    distortion.prepare(sampleRate); equalizer.prepare(sampleRate);
+    phaser.prepare(sampleRate); reverb.prepare(sampleRate,int(reverbMode->load()));
+    for(size_t i=0;i<values.size();++i) smooth[i].prepare(sampleRate,values[i]->load());
+    inputPeak.store(0); outputPeak.store(0);
 }
 
 bool XiffectsAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
@@ -88,11 +121,74 @@ bool XiffectsAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts)
 void XiffectsAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer&)
 {
     juce::ScopedNoDenormals noDenormals;
-    // Initial scaffold: clean pass-through plus output trim.
-    // Individual effect DSP blocks are intentionally TODOs; the UI/parameters are wired first.
-    const auto gainDb = parameters.getRawParameterValue("OUTPUT")->load();
-    const auto gain = juce::Decibels::decibelsToGain(gainDb);
-    buffer.applyGain(gain);
+    std::array<float, controlCount> target{}, v{};
+    for(size_t i=0;i<values.size();++i) target[i]=values[i]->load();
+    std::array<bool,12> notes{};
+    for(size_t i=0;i<notes.size();++i) notes[i]=noteValues[i]->load()>0.5f;
+    const int activeScale=selectedScale();
+    double bpm=120;bool hostTempo=false;
+    if(auto* playhead=getPlayHead())if(auto position=playhead->getPosition())if(auto supplied=position->getBpm())
+        if(std::isfinite(*supplied) && *supplied>0){bpm=*supplied;hostTempo=true;}
+    tempoBpm.store(xiffects::safeTempo(bpm));tempoFromHost.store(hostTempo);
+    const bool sync=delaySync->load()>.5f;
+    const float syncSeconds=xiffects::syncedDelaySeconds(bpm,int(delayDivision->load()));
+    const int roomMode=int(reverbMode->load());
+    float inPeak=0, outPeak=0;
+    const int channels=buffer.getNumChannels();
+    const auto blend=[](float dry,float wet,float mix) { return dry+(wet-dry)*mix; };
+    for(int n=0;n<buffer.getNumSamples();++n) {
+        for(size_t i=0;i<v.size();++i) v[i]=smooth[i].next(target[i]);
+        std::array<float,2> x {buffer.getSample(0,n), channels>1?buffer.getSample(1,n):buffer.getSample(0,n)};
+        std::array<float,2> dry{};
+        for(size_t c=0;c<2;++c) {
+            dry[c]=bypassDelay[c][bypassPosition]; bypassDelay[c][bypassPosition]=x[c];
+        }
+        bypassPosition=(bypassPosition+1)%bypassDelay[0].size();
+        const float peak=std::max(std::abs(x[0]),std::abs(x[1])); inPeak=std::max(inPeak,peak);
+        const float tuningRatio=correction.process(x[0],int(target[tuneKey]),activeScale,
+            notes,v[tuneStrength]*0.01f,v[tuneSpeed]);
+        const float fundamental=correction.detector.frequency;
+        if(isLiveMode()) {
+            x=livePitch.process(x,tuningRatio,v[tuneOn]*v[tuneMix]*0.01f,
+                std::exp2(v[octShift]),std::exp2(v[pitchShift]/12),
+                v[octOn]*v[octMix]*0.01f,v[pitchOn]*v[pitchMix]*0.01f,fundamental);
+        } else {
+        x=tuneShifter.process(x,tuningRatio,v[tuneOn]*v[tuneMix]*0.01f,fundamental);
+        const float octaveAmount=v[octOn]*v[octMix]*0.01f, pitchAmount=v[pitchOn]*v[pitchMix]*0.01f;
+        const float normalizer=std::max(1.f,octaveAmount+pitchAmount);
+        const float shiftedFundamental=fundamental*((v[tuneOn]*v[tuneMix]>50)?tuningRatio:1.f);
+        const auto octaved=octaveShifter.process(x,std::exp2(v[octShift]),octaveAmount/normalizer,shiftedFundamental);
+        const auto pitched=pitchShifter.process(x,std::exp2(v[pitchShift]/12),pitchAmount/normalizer,shiftedFundamental);
+        for(size_t c=0;c<2;++c) x[c]=octaved[c]+pitched[c]-octaveShifter.dryOutput[c];
+        }
+        const float gain=compressor.gain(peak,v[threshold],v[ratio],v[makeup]);
+        for(auto& sample:x) sample=blend(sample,sample*gain,v[compOn]);
+        for(size_t c=0;c<2;++c) x[c]=blend(x[c],distortion.process(x[c],c,v[drive]*0.01f,v[tone]*0.01f),v[distOn]*v[distMix]*0.01f);
+        const std::array<float,4> gains {xiffects::db(v[low]),xiffects::db(v[mid]),xiffects::db(v[high]),xiffects::db(v[air])};
+        for(size_t c=0;c<2;++c) x[c]=blend(x[c],equalizer.process(x[c],c,gains),v[eqOn]);
+        const auto phased=phaser.process(x,v[rate],v[depth]*0.01f,v[phaserFeedback]*0.01f);
+        for(size_t c=0;c<2;++c) x[c]=blend(x[c],phased[c],v[phaserOn]);
+        const auto echoes=delay.process(x,sync?syncSeconds:v[delayTime],v[feedback]*0.01f);
+        for(size_t c=0;c<2;++c) x[c]=blend(x[c],echoes[c],v[delayOn]*v[delayMix]*0.01f);
+        const auto reverbed=reverb.process(x,v[revSize]*0.01f,v[decay],roomMode);
+        for(size_t c=0;c<2;++c) x[c]=blend(x[c],reverbed[c],v[revOn]*v[revMix]*0.01f);
+        const float outputGain=xiffects::db(v[output]);
+        for(int c=0;c<channels;++c) {
+            // Safety ceiling only on the processed path; global bypass remains transparent.
+            const float sample=blend(dry[size_t(c)],std::clamp(x[size_t(c)]*outputGain,-1.0f,1.0f),v[power]);
+            buffer.setSample(c,n,sample); outPeak=std::max(outPeak,std::abs(sample));
+        }
+        waveformMin=std::min(waveformMin,buffer.getSample(0,n));
+        waveformMax=std::max(waveformMax,buffer.getSample(0,n));
+        if(++telemetryCounter>=256) {
+            const float applied=correction.detected>0?correction.detected+
+                (correction.corrected-correction.detected)*v[tuneOn]*v[tuneMix]*0.01f*v[power]:0;
+            telemetry.push({correction.detected,applied,waveformMin,waveformMax});
+            telemetryCounter=0; waveformMin=waveformMax=0;
+        }
+    }
+    inputPeak.store(inPeak,std::memory_order_relaxed);
+    outputPeak.store(outPeak,std::memory_order_relaxed);
 }
 
 juce::AudioProcessorEditor* XiffectsAudioProcessor::createEditor()
@@ -111,5 +207,39 @@ void XiffectsAudioProcessor::setStateInformation (const void* data, int sizeInBy
 {
     std::unique_ptr<juce::XmlElement> xml (getXmlFromBinary (data, sizeInBytes));
     if (xml != nullptr && xml->hasTagName (parameters.state.getType()))
-        parameters.replaceState (juce::ValueTree::fromXml (*xml));
+        parameters.replaceState (migrateState(juce::ValueTree::fromXml (*xml)));
+}
+
+// Required entry point for both VST3 and Standalone wrappers.
+juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter() { return new XiffectsAudioProcessor(); }
+
+int XiffectsAudioProcessor::selectedScale() const {
+    const int extended=int(extendedScale->load());
+    return extended>0?extended+7:int(values[tuneScale]->load());
+}
+const juce::Array<juce::var>& XiffectsAudioProcessor::factoryPresets() {
+    static const juce::var bank=juce::JSON::parse(juce::String::fromUTF8(BinaryData::factory_presets_json,BinaryData::factory_presets_jsonSize));
+    return *bank["presets"].getArray();
+}
+void XiffectsAudioProcessor::loadFactoryPreset(int index) {
+    const auto& bank=factoryPresets();
+    if(index<0 || index>=bank.size()) return;
+    const auto* valuesObject=bank[index]["parameters"].getDynamicObject();
+    for(const auto& entry:valuesObject->getProperties()) {
+        if(auto* parameter=parameters.getParameter(entry.name.toString())) {
+            parameter->beginChangeGesture();
+            parameter->setValueNotifyingHost(parameter->convertTo0to1(float(entry.value)));
+            parameter->endChangeGesture();
+        }
+    }
+}
+
+juce::ValueTree XiffectsAudioProcessor::migrateState(juce::ValueTree state) {
+    if(state.isValid() && state.getNumChildren()>0) {
+        for(const auto& item:std::array<std::pair<const char*,float>,4>{{{"TUNE_SCALE_EXT",0},{"DLY_SYNC",0},{"DLY_DIVISION",5},{"REV_MODE",0}}}) {
+            if(state.getChildWithProperty("id",item.first).isValid())continue;
+            juce::ValueTree entry("PARAM");entry.setProperty("id",item.first,nullptr);entry.setProperty("value",item.second,nullptr);state.appendChild(entry,nullptr);
+        }
+    }
+    return state;
 }

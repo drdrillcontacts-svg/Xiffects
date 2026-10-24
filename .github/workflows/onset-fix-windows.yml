@@ -1,0 +1,93 @@
+name: Onset Fix Windows Validation
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  reference:
+    runs-on: windows-latest
+    timeout-minutes: 35
+    steps:
+      - name: Preserve exact Reference bytes on checkout
+        run: git config --global core.autocrlf false
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: 9c4271ca7b3888f1dab0cdc5fd1d2f2fe511d4d8
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify narrowly scoped onset change
+        shell: python
+        run: |
+          import hashlib,json,pathlib,subprocess
+          expected=json.loads(pathlib.Path('docs/reference/baseline-files.json').read_text())['sha256']
+          changes=json.loads(pathlib.Path('docs/onset-fix/production-hashes.json').read_text())['changed_files']
+          expected.update(changes)
+          for name,digest in expected.items():
+            if name.startswith(('Source/','Assets/')):
+              actual=hashlib.sha256(pathlib.Path(name).read_bytes()).hexdigest()
+              if actual!=digest: print('::error title=Reference integrity::'+name+' expected='+digest+' actual='+actual)
+              assert actual==digest,name
+          actual=subprocess.check_output(['git','diff','--name-only','26e8bb3','--','Source','Assets'],text=True).splitlines()
+          assert sorted(actual)==sorted(changes)
+          pathlib.Path('evidence').mkdir()
+          pathlib.Path('evidence/environment.txt').write_text(subprocess.check_output(['systeminfo'],text=True))
+      - name: Configure x64 Release
+        run: |
+          cmake -S . -B build-reference-win -A x64 -DXIFFECTS_BUILD_REFERENCE_TOOLS=ON 2>&1 | Tee-Object evidence/configure.txt
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Build product and harness
+        run: |
+          cmake --build build-reference-win --config Release --parallel 2 2>&1 | Tee-Object evidence/build.txt
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Execute all CTests
+        id: tests
+        continue-on-error: true
+        run: |
+          ctest --test-dir build-reference-win -C Release -V --output-junit "$pwd/evidence/ctest.xml" 2>&1 | Tee-Object evidence/ctest.txt
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Fixtures and actual product rendering
+        id: renders
+        continue-on-error: true
+        run: |
+          python -m pip install numpy==2.2.6
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python Tools/GenerateReferenceFixtures.py build-reference-fixtures
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python Tests/FixtureTests.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python Tools/ValidateReferenceWindows.py --renderer build-reference-win/Release/XiffectsReferenceRender.exe --fixtures build-reference-fixtures --output evidence/renders --require-onset-a4
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Load real VST3 in pluginval validation host
+        id: pluginval
+        continue-on-error: true
+        run: |
+          Invoke-WebRequest https://github.com/Tracktion/pluginval/releases/download/v1.0.4/pluginval_Windows.zip -OutFile build-reference-pluginval.zip
+          Get-FileHash build-reference-pluginval.zip | Out-File evidence/pluginval-sha256.txt
+          Expand-Archive build-reference-pluginval.zip build-reference-pluginval
+          $exe = (Get-ChildItem build-reference-pluginval -Recurse -Filter pluginval.exe | Select-Object -First 1).FullName
+          & $exe --strictness-level 5 --validate "$pwd/build-reference-win/Xiffects_artefacts/Release/VST3/Xiffects.vst3" 2>&1 | Tee-Object evidence/pluginval.txt
+          $result = $LASTEXITCODE
+          Write-Output "::notice title=PluginvalExit::$result"
+          exit $result
+      - name: Publish status evidence
+        if: always()
+        run: |
+          Write-Output '::notice title=ValidationStatus::ctest=${{ steps.tests.outcome }};renders=${{ steps.renders.outcome }};pluginval=${{ steps.pluginval.outcome }};REAPER=NOT_RUN;hardware=NOT_MEASURED'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Onset-Fix-Windows-Evidence
+          path: |
+            evidence/
+            build-reference-win/Xiffects_artefacts/Release/VST3/
+            build-reference-win/Xiffects_artefacts/Release/Standalone/
+            build-reference-win/CMakeCache.txt
+            build-reference-win/Testing/Temporary/
+            build-reference-fixtures/manifest.json
+          if-no-files-found: error
+      - name: Fail if validation failed
+        if: always()
+        run: |
+          if ('${{ steps.tests.outcome }}' -ne 'success' -or '${{ steps.renders.outcome }}' -ne 'success' -or '${{ steps.pluginval.outcome }}' -ne 'success') { exit 1 }

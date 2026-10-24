@@ -1,0 +1,10 @@
+[1/10] Building CXX object CMakeFiles/XiffectsDSPTests.dir/Tests/DSPTests.cpp.o
+[2/10] Building CXX object CMakeFiles/XiffectsPitchTests.dir/Tests/PitchTests.cpp.o
+[3/10] Building CXX object CMakeFiles/XiffectsOnsetTests.dir/Tests/OnsetTests.cpp.o
+[4/10] Building CXX object CMakeFiles/XiffectsCorrectionRegressionTests.dir/Tests/CorrectionRegressionTests.cpp.o
+[5/10] Linking CXX executable XiffectsDSPTests
+[6/10] Linking CXX executable XiffectsPitchTests
+[7/10] Linking CXX executable XiffectsOnsetTests
+[8/10] Linking CXX executable XiffectsCorrectionRegressionTests
+[9/10] Building CXX object CMakeFiles/XiffectsRealtimeTests.dir/Tests/RealtimeTests.cpp.o
+[10/10] Linking CXX executable XiffectsRealtimeTests

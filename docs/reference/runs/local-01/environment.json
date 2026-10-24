@@ -1,0 +1,10 @@
+{
+  "platform": "Linux-6.1.158+-x86_64-with-glibc2.36",
+  "machine": "x86_64",
+  "python": "3.11.2 (main, Apr  8 2026, 01:58:00) [GCC 12.2.0]",
+  "purpose": "offline Reference evidence, no hardware access",
+  "build_type": "Release",
+  "dsp_only": true,
+  "benchmarks": true,
+  "source_baseline_commit": "26e8bb36aac808f1922373e65e0c8a357cf668df"
+}

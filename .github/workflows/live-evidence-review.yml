@@ -1,0 +1,54 @@
+name: Review Live and Studio Evidence
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  review:
+    runs-on: windows-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/download-artifact@v4
+        with:
+          name: Onset-Fix-Windows-Evidence
+          path: studio
+          run-id: 39687622124
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: Xiffects-Live-Windows-Experimental
+          path: live
+          run-id: 39690697623
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Recompute saved WAV metrics and compare same inputs
+        run: |
+          python -m pip install numpy==2.2.6
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python Tests/ReferenceAnalysisTests.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Recompute Live saved WAVs
+        run: |
+          python Tools/ReviewReferenceEvidence.py live reviewed-live
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Recompute Studio saved WAVs
+        run: |
+          python Tools/ReviewReferenceEvidence.py studio reviewed-studio
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Compare identical inputs and parameters
+        run: |
+          python Tools/CompareLiveEvidence.py studio live
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Live-Studio-Compared-Evidence
+          path: |
+            reviewed-live/
+            reviewed-studio/
+            live-comparison.json
+          if-no-files-found: error
