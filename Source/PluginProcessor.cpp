@@ -28,6 +28,10 @@ XiffectsAudioProcessor::APVTS::ParameterLayout XiffectsAudioProcessor::createPar
     APVTS::ParameterLayout layout;
     auto addFloat = [&layout](const char* id, const char* name, float lo, float hi, float def, float step = 0.1f)
     {
+        // New Live instances must not colour an inserted track before the user
+        // selects an effect. Explicit preset/host-state values are not changed.
+        if(isLiveMode() && juce::String(id).startsWith("EQ_"))def=0;
+        if(isLiveMode() && juce::String(id)=="TUNE_MIX")def=100;
         layout.add (std::make_unique<juce::AudioParameterFloat>(
             juce::ParameterID { id, 1 }, name,
             juce::NormalisableRange<float> (lo, hi, step), def));
@@ -44,7 +48,7 @@ XiffectsAudioProcessor::APVTS::ParameterLayout XiffectsAudioProcessor::createPar
     {
         auto id = juce::String (modules[i]) + "_ON";
         auto nm = juce::String (names[i]) + " Enabled";
-        addBool (id.toRawUTF8(), nm.toRawUTF8(), i == 5 ? true : false);
+        addBool (id.toRawUTF8(), nm.toRawUTF8(), !isLiveMode() && i == 5);
     }
 
     addFloat("OCT_MIX", "Octaver Mix", 0, 100, 35);
@@ -161,7 +165,10 @@ void XiffectsAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
         const auto pitched=pitchShifter.process(x,std::exp2(v[pitchShift]/12),pitchAmount/normalizer,shiftedFundamental);
         for(size_t c=0;c<2;++c) x[c]=octaved[c]+pitched[c]-octaveShifter.dryOutput[c];
         }
-        const float gain=compressor.gain(peak,v[threshold],v[ratio],v[makeup]);
+        // Live sidechain follows the signal being compressed, not input ~12 ms
+        // ahead of it. Keep the historical Studio sidechain for comparison.
+        const float compressionPeak=isLiveMode()?std::max(std::abs(x[0]),std::abs(x[1])):peak;
+        const float gain=compressor.gain(compressionPeak,v[threshold],v[ratio],v[makeup]);
         for(auto& sample:x) sample=blend(sample,sample*gain,v[compOn]);
         for(size_t c=0;c<2;++c) x[c]=blend(x[c],distortion.process(x[c],c,v[drive]*0.01f,v[tone]*0.01f),v[distOn]*v[distMix]*0.01f);
         const std::array<float,4> gains {xiffects::db(v[low]),xiffects::db(v[mid]),xiffects::db(v[high]),xiffects::db(v[air])};
@@ -242,4 +249,16 @@ juce::ValueTree XiffectsAudioProcessor::migrateState(juce::ValueTree state) {
         }
     }
     return state;
+}
+
+void XiffectsAudioProcessor::loadCleanState() {
+    // Message-thread operation, like factory preset selection, not an audio callback.
+    for(auto* parameter:getParameters()) {
+        auto* p=dynamic_cast<juce::RangedAudioParameter*>(parameter);
+        float value=p->getDefaultValue();
+        if(p->paramID.endsWith("_ON") || p->paramID.startsWith("EQ_") || p->paramID=="OUTPUT")value=p->convertTo0to1(0);
+        if(p->paramID=="TUNE_MIX")value=p->convertTo0to1(100);
+        if(p->paramID=="POWER")value=p->convertTo0to1(1);
+        p->beginChangeGesture();p->setValueNotifyingHost(value);p->endChangeGesture();
+    }
 }

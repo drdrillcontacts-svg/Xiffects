@@ -1,5 +1,6 @@
 #pragma once
 #include "Effects.h"
+#include "Interpolation.h"
 
 namespace xiffects {
 // Bounded-cost YIN analysis at approximately 12 kHz. Two cascaded low-pass
@@ -78,8 +79,8 @@ private:
 // pitch processing is not phase-identical to dry at non-unity ratios.
 class PitchShifter {
 public:
-    void prepare(double sampleRate,double windowSeconds=0.04,float maximumRatio=4.f) {
-        ratioLimit=maximumRatio;
+    void prepare(double sampleRate,double windowSeconds=0.04,float maximumRatio=4.f,bool cubicInterpolation=false) {
+        ratioLimit=maximumRatio; useCubic=cubicInterpolation;
         window=std::max(64,int(sampleRate*windowSeconds));
         if(window%2) ++window;
         for(auto& channel:memory) channel.assign(size_t(window*2+8),0);
@@ -116,6 +117,12 @@ private:
         float index=float(position)-delay;
         if(index<0) index+=float(memory[channel].size());
         const auto i=size_t(index); const float fraction=index-float(i);
+        if(useCubic) {
+            if(fraction==0)return memory[channel][i];
+            const auto size=memory[channel].size();
+            const auto previous=i==0?size-1:i-1, next=i+1<size?i+1:0, after=next+1<size?next+1:0;
+            return cubicInterpolate(memory[channel][previous],memory[channel][i],memory[channel][next],memory[channel][after],fraction);
+        }
         return memory[channel][i]*(1-fraction)+memory[channel][(i+1)%memory[channel].size()]*fraction;
     }
     std::array<std::vector<float>,2> memory;
@@ -124,6 +131,7 @@ private:
     float phase=0.5f;
     Smoother unity, grain;
     float sampleRateHz=48000,ratioLimit=4.f;
+    bool useCubic=false;
 };
 
 class PitchCorrection {

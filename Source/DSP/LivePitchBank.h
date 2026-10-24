@@ -7,7 +7,7 @@ namespace xiffects {
 class LivePitchBank {
 public:
     void prepare(double sampleRate) {
-        for(auto* voice:{&tune,&octave,&pitch}) voice->prepare(sampleRate,0.016,8.f);
+        for(auto* voice:{&tune,&octave,&pitch}) voice->prepare(sampleRate,0.016,8.f,true);
     }
     int latency() const {return tune.latency();}
     std::array<float,2> process(std::array<float,2> input,float correctionRatio,

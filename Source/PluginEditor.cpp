@@ -44,28 +44,31 @@ XiffectsAudioProcessorEditor::XiffectsAudioProcessorEditor (XiffectsAudioProcess
     brand.setColour (juce::Label::textColourId, white);
     brand.setJustificationType (juce::Justification::centredLeft);
     addAndMakeVisible (brand);
-    byline.setText ("UNIQUE SOUNDS BY XIVAN", juce::dontSendNotification);
-    byline.setFont (juce::Font (14.0f));
-    byline.setColour (juce::Label::textColourId, soft);
-    addAndMakeVisible (byline);
+    programmerCredit.setText ("Programmer Daniyal Azimi", juce::dontSendNotification);
+    programmerCredit.setFont (juce::Font (15.0f));
+    programmerCredit.setColour (juce::Label::textColourId, soft);
+    programmerCredit.setJustificationType(juce::Justification::centred);
+    addAndMakeVisible (programmerCredit);
     saxLabel.setText ("SOPRANO SAXOPHONE  /  MULTI-EFFECT", juce::dontSendNotification);
     saxLabel.setFont (juce::Font (14.0f));
     saxLabel.setColour (juce::Label::textColourId, soft);
     addAndMakeVisible (saxLabel);
 
+    presetBox.addItem("Clean - No effects",1000);
+    presetBox.addSeparator();
     const auto& bank=XiffectsAudioProcessor::factoryPresets();
     for(int i=0;i<bank.size();++i) {
         if(i==0 || bank[i]["category"]!=bank[i-1]["category"])presetBox.addSectionHeading(bank[i]["category"].toString());
         presetBox.addItem(bank[i]["name"].toString(),i+1);
     }
     presetBox.setText("Factory presets",juce::dontSendNotification);
-    presetBox.onChange=[this] {processor.loadFactoryPreset(presetBox.getSelectedId()-1);};
+    presetBox.onChange=[this] {if(presetBox.getSelectedId()==1000)processor.loadCleanState();else processor.loadFactoryPreset(presetBox.getSelectedId()-1);};
     previousPreset.setTooltip("Previous factory preset (wraps at first)");
     nextPreset.setTooltip("Next factory preset (wraps at last)");
     previousPreset.onClick=[this]{stepPreset(-1);};nextPreset.onClick=[this]{stepPreset(1);};
     addAndMakeVisible(previousPreset);addAndMakeVisible(nextPreset);
     syncButton.setClickingTogglesState(true);addAndMakeVisible(syncButton);
-    syncButton.setTooltip("Host tempo sync; 120 BPM if the host supplies no tempo. Tempo range 30–300 BPM.");
+    syncButton.setTooltip("Host tempo sync; 120 BPM if the host supplies no tempo. Tempo range 30-300 BPM.");
     syncAttachment=std::make_unique<XiffectsAudioProcessor::APVTS::ButtonAttachment>(processor.parameters,"DLY_SYNC",syncButton);
     for(size_t i=0;i<xiffects::delayDivisionNames.size();++i)divisionBox.addItem(xiffects::delayDivisionNames[i],int(i)+1);
     reverbBox.addItemList({"Room","Hall","Plate","Chamber"},1);
@@ -102,7 +105,7 @@ XiffectsAudioProcessorEditor::XiffectsAudioProcessorEditor (XiffectsAudioProcess
         addAndMakeVisible (m->titleLabel);
         m->parameterIds = ids[(size_t)i];
         m->labels = labels[(size_t)i];
-        m->bypass.setButtonText ("●");
+        m->bypass.setButtonText (juce::String::charToString(0x25cf));
         m->bypass.setClickingTogglesState (true);
         m->bypass.setColour (juce::TextButton::buttonColourId, panel);
         m->bypass.setColour (juce::TextButton::buttonOnColourId, red);
@@ -120,6 +123,7 @@ XiffectsAudioProcessorEditor::XiffectsAudioProcessorEditor (XiffectsAudioProcess
             if(id=="COMP_THRESHOLD" || id=="COMP_MAKEUP") s->setTextValueSuffix(" dB");
             if(id=="DLY_TIME" || id=="REV_DECAY") s->setTextValueSuffix(" s");
             if(id=="PHASER_RATE") s->setTextValueSuffix(" Hz");
+            if(id=="TUNE_MIX")s->setTooltip("For single-voice correction use 100% Mix and adjust Strength. Partial Mix blends dry and shifted voices and can cause beating.");
             if(id=="TUNE_SPEED") s->setTextValueSuffix(" ms");
             if(id=="PITCH_SEMITONES") s->setTextValueSuffix(" st");
             if(i==5) s->setSliderStyle(juce::Slider::LinearVertical);
@@ -273,7 +277,7 @@ void XiffectsAudioProcessorEditor::resized()
     layoutTouch();return;
 #endif
     brand.setBounds(48,20,230,50);
-    byline.setBounds(290,30,230,30);
+    programmerCredit.setBounds(110,360,370,26);
     saxLabel.setBounds(565,30,300,30);
     previousPreset.setBounds(896,20,32,32);presetBox.setBounds(934,20,208,32);nextPreset.setBounds(1148,20,32,32);
     saveButton.setBounds(1195,22,48,27); loadButton.setBounds(1248,22,48,27); settingsButton.setBounds(1301,22,30,27);
@@ -390,14 +394,14 @@ void XiffectsAudioProcessorEditor::choosePresetFile(bool save) {
 void XiffectsAudioProcessorEditor::stepPreset(int direction) {
     const int count=XiffectsAudioProcessor::factoryPresets().size();if(count==0)return;
     const int current=presetBox.getSelectedId()-1;
-    const int index=current<0?(direction>0?0:count-1):(current+direction+count)%count;
+    const int index=(current<0 || current>=count)?(direction>0?0:count-1):(current+direction+count)%count;
     presetBox.setSelectedId(index+1,juce::sendNotificationSync);
 }
 
 void XiffectsAudioProcessorEditor::showSettings() {
     juce::PopupMenu menu;
     menu.addSectionHeader("INTERFACE SIZE");
-    menu.addItem(1,"80% — compact");menu.addItem(2,"100% — standard");menu.addItem(3,"120% — large");
+    menu.addItem(1,"80% - compact");menu.addItem(2,"100% - standard");menu.addItem(3,"120% - large");
 
     const juce::Component::SafePointer<XiffectsAudioProcessorEditor> safe(this);
     menu.showMenuAsync(juce::PopupMenu::Options().withTargetComponent(&settingsButton),[safe](int choice) {
@@ -419,6 +423,7 @@ void XiffectsAudioProcessorEditor::layoutTouch() {
     place(previousPreset,12,52,44,44);place(presetBox,62,52,w-124,44);place(nextPreset,w-56,52,44,44);
     place(saveButton,12,102,68,44);place(loadButton,84,102,68,44);
     place(settingsButton,156,102,48,44);place(touchPage,210,102,w-222,44);
+    if(page!=3 && getHeight()>650)place(programmerCredit,12,getHeight()-27,w-24,20);
     const int y=154;
     if(page==1) {
         place(touchModule,12,y,w-24,44);
@@ -449,7 +454,7 @@ void XiffectsAudioProcessorEditor::layoutTouch() {
 void XiffectsAudioProcessorEditor::paintTouch(juce::Graphics& g) {
     g.fillAll(bg);
     if(touchPage.getSelectedId()!=3) {
-        if(getHeight()>650)g.drawImageWithin(hero,12,getHeight()-120,getWidth()-24,108,juce::RectanglePlacement::centred);
+        if(getHeight()>650)g.drawImageWithin(hero,12,getHeight()-120,getWidth()-24,88,juce::RectanglePlacement::centred);
         return;
     }
     const float width=float(getWidth()-24);

@@ -50,6 +50,7 @@ public:
     static APVTS::ParameterLayout createParameterLayout();
     static const juce::Array<juce::var>& factoryPresets();
     void loadFactoryPreset(int index);
+    void loadCleanState();
     int selectedScale() const;
     static juce::ValueTree migrateState(juce::ValueTree state);
 

@@ -55,12 +55,12 @@ private:
     std::vector<std::unique_ptr<Module>> modules;
     juce::ComboBox presetBox, keyBox, scaleBox;
     std::unique_ptr<ComboAttachment> keyAttachment, scaleAttachment;
-    juce::Label brand, byline, saxLabel, tuneTitle, keyLabel, scaleLabel, strengthLabel, speedLabel;
+    juce::Label brand, programmerCredit, saxLabel, tuneTitle, keyLabel, scaleLabel, strengthLabel, speedLabel;
     juce::Slider tuneStrength, tuneSpeed;
     std::unique_ptr<Attachment> strengthAttachment, speedAttachment;
     std::array<xiffects::NoteKey, 12> noteButtons;
     std::array<std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment>, 12> noteAttachments;
-    juce::TextButton powerButton { "⏻" };
+    juce::TextButton powerButton { "ON" };
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> powerAttachment;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (XiffectsAudioProcessorEditor)
