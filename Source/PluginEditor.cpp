@@ -226,7 +226,7 @@ void XiffectsAudioProcessorEditor::paint (juce::Graphics& g)
     }
     g.setColour(panel); g.fillRoundedRectangle(22,736,1396,144,10);
     g.setColour(juce::Colour(0xff45464b));g.drawRoundedRectangle(22,736,1396,144,10,1);
-    g.setColour(soft);g.setFont(juce::Font(11.0f));
+    g.setColour(soft);g.setFont(juce::Font(15.0f));
     g.drawText("PITCH: DETECTED / APPLIED ESTIMATE",850,750,290,20,juce::Justification::centredLeft);
     g.drawText("ALLOWED NOTES  /  SCALE + MANUAL",310,755,530,20,juce::Justification::left);
     g.drawText("OUTPUT",960,62,70,18,juce::Justification::left);
@@ -421,10 +421,10 @@ void XiffectsAudioProcessorEditor::layoutTouch() {
         place(touchModule,12,y,w-24,44);
         const int index=juce::jlimit(0,8,touchModule.getSelectedId()-1);
         if(index<int(modules.size())) {
-            if(index==2)place(reverbBox,12,y+350,w-24,44);
-            if(index==3){place(syncButton,12,y+350,72,44);place(divisionBox,92,y+350,w-104,44);place(tempoLabel,12,y+398,w-24,24);}
             auto& m=*modules[size_t(index)];place(m.bypass,w-104,y+50,92,44);
             place(m.titleLabel,12,y+50,w-128,44);
+            if(index==2){m.titleLabel.setVisible(false);place(reverbBox,12,y+50,w-128,44);}
+            if(index==3){m.titleLabel.setVisible(false);place(syncButton,12,y+50,64,44);place(divisionBox,82,y+50,w-198,44);place(tempoLabel,w/2,y+226,w/2-12,44);}
             const int width=(w-36)/2;
             for(size_t j=0;j<m.sliders.size();++j) {
                 const int x=12+int(j%2)*(width+12), top=y+100+int(j/2)*126;
