@@ -1,0 +1,21 @@
+{
+  "candidate": "0eeeb36",
+  "sha256": {
+    "Assets/README.md": "8b6c23508629f7386ae29c1eeac849040e3feafc6c09670a8055f7975cadd29c",
+    "Assets/factory_presets.json": "c8fee32fd9d9a328575f37057de1e7a9ee2d07f9ec0b849e87e069ecf03a8e25",
+    "Assets/hero.jpg": "4075e42456f6429672b15d2d5460d2b1147ec57db4fc7c8eeba6984d104b3248",
+    "CMakeLists.txt": "ca3dd0a894539ab3b3d3b43a75952bdda8d1400cfa0f374676b6904d267311c9",
+    "Source/DSP/Effects.h": "32caf76e7c95e89aadcf48489771567a986c266b911e8de2532a865834692a7f",
+    "Source/DSP/LivePitchBank.h": "6e258f9dead40f465da36222d66fca28d7c7b1c852147784a7ad47b8bf98c552",
+    "Source/DSP/Pitch.h": "d523fc7bc03d55d34d9b37e8ccb0a207d078f38db109e01cd9c6ad77c5cdc0ce",
+    "Source/DSP/ReverbBank.h": "16e3b9cbbb94fedffce07d173ac6b49aaefab23da027a7611231b0fd0649af4c",
+    "Source/DSP/Scales.h": "87b5b9f92208195f176036458eec5e85f6bcee7925c6171a687b462443168cbb",
+    "Source/DSP/TempoDelay.h": "5d24387cfb7080086a7f5a94c681501a5e0880d97e4d5b85ff69d34a6dc5fa0b",
+    "Source/PluginEditor.cpp": "f9813e92f3ce3ef93db38ee86093a8a2061f97ff79bfaac75bb7866447246139",
+    "Source/PluginEditor.h": "2b76d29bba4b05a057e8dd27892565caff3a50cd292ac53c299fb92a5dd4038f",
+    "Source/PluginProcessor.cpp": "2b77fba5e41f507096405970dd4203f25151c7d198485c328efa3bddf4d3e2f1",
+    "Source/PluginProcessor.h": "992a70b5fdb19fee12174a898ebd22767b981b3e934b281023344f2ffcfb4119",
+    "Source/Telemetry.h": "696f5275ae0f071dd7760ab7f446e8bc275247b67b2733f7044cb020059d62bf",
+    "Source/UI/Controls.h": "edbd3ea3632e2c107b7592e1a0085e842d2d2c932877e33aa84d2792704a4754"
+  }
+}

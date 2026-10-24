@@ -1,0 +1,2 @@
+6269c9613327f41953e6d4f9e7f899411d3af94bb0d92bcc21b0a3496cf4bdb6  build-time-effects/old-room.pcm
+6269c9613327f41953e6d4f9e7f899411d3af94bb0d92bcc21b0a3496cf4bdb6  build-time-effects/new-room.pcm

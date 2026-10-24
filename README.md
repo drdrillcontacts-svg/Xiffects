@@ -4,6 +4,16 @@ Native C++17 / JUCE 8.0.6 soprano saxophone multi-effect, VST3 and Standalone.
 This is a working implementation in development, **not an acoustically validated
 commercial release**. No web view or full-interface screenshot is used as UI.
 
+## Current UI / time-effects / tuning candidate
+
+Preset previous/next navigation, larger compact-view text, no editor About dialog,
+host-synchronised delay and four reverb characters are now implemented. A measured
+short-period YIN interpolation bias was also corrected; this is a pitch-accuracy
+fix, not a new formant-preserving engine or a reduction of the ~12 ms Live delay.
+[Current binaries, native test evidence and quality limits](docs/time-effects/README.md).
+Windows/macOS build, 11 tests each and native VST3/AU validation passed; mobile
+outputs retain their debug/unsigned, not-device-validated status.
+
 ## Factory bank and cross-platform development builds
 
 The current native implementation includes **50 complete factory presets** and
