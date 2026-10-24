@@ -33,6 +33,7 @@ inline void testInsertQuality() {
         std::cout<<"INSERT_QUALITY sr="<<sr<<" channels="<<channels<<" compressor="<<compressed<<" delay="<<latency<<" max_error="<<maximum<<'\n';
         p.loadFactoryPreset(12);p.loadCleanState();
         for(auto* id:{"OCT_ON","COMP_ON","REV_ON","DLY_ON","DIST_ON","EQ_ON","PITCH_ON","PHASER_ON","TUNE_ON"})check(p.parameters.getRawParameterValue(id)->load()==0,"Clean disables all effects");
-        check(p.parameters.getRawParameterValue("OUTPUT")->load()==0,"Clean unity output");
+        // Normalised JUCE float round-trips can leave micro-dB rounding residue.
+        check(std::abs(p.parameters.getRawParameterValue("OUTPUT")->load())<1e-4f,"Clean unity output within 0.0001 dB");
     }
 }
