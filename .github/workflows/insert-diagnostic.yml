@@ -1,0 +1,25 @@
+name: Inspect insert-test failure
+on:
+  push:
+    paths: ['.github/workflows/insert-diagnostic.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          run-id: 40143729998
+          name: Tests-macos-14
+          path: downloaded
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          for p in Path('downloaded').rglob('LastTest.log'):
+              text=p.read_text(errors='replace')
+              for i in range(0,len(text),10000):print('::notice title=Diagnostic'+str(i//10000)+'::'+json.dumps(text[i:i+10000]))
+          PY
