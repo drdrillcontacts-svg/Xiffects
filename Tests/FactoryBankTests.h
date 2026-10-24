@@ -2,9 +2,10 @@
 #include <set>
 #include <stdexcept>
 #include "TimeHostTests.h"
+#include "ProductQualityTests.h"
 inline void testFactoryBank() {
     auto check=[](bool value,const char* text){if(!value)throw std::runtime_error(text);};
-    testHostTempo();
+    testHostTempo();testProductPitchQuality();testEditorNavigation();
     XiffectsAudioProcessor legacy;
     auto old=legacy.parameters.copyState();
     old.removeChild(old.getChildWithProperty("id","TUNE_SCALE_EXT"),nullptr);

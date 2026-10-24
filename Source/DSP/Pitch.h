@@ -10,7 +10,7 @@ public:
         decimation = std::max(1, int(sampleRate / 12000.0));
         rate = float(sampleRate / decimation);
         coefficient = 1 - std::exp(-2*pi*2500/float(sampleRate));
-        ring.fill(0); difference.fill(0); write=filled=counter=hop=0;
+        ring.fill(0); difference.fill(0); rawDifference.fill(0); write=filled=counter=hop=0;
         low1=low2=frequency=confidence=0;
     }
     bool push(float input) {
@@ -38,6 +38,7 @@ private:
         for(int lag=1;lag<=maximum;++lag) {
             float sum=0;
             for(size_t i=0;i<256;++i) { const float d=frame[i]-frame[i+size_t(lag)]; sum+=d*d; }
+            rawDifference[size_t(lag)]=sum;
             running+=sum;
             difference[size_t(lag)]=running>1.e-12f?sum*float(lag)/running:1;
         }
@@ -45,7 +46,11 @@ private:
             if (difference[size_t(lag)] >= 0.15f) continue;
             while(lag+1<maximum && difference[size_t(lag+1)]<difference[size_t(lag)]) ++lag;
             if(lag>=maximum) return;
-            const float a=difference[size_t(lag-1)], b=difference[size_t(lag)], c=difference[size_t(lag+1)];
+            // CMND selects the period, but its lag-dependent normalisation biases
+            // parabolic refinement at short periods. Refine the raw difference
+            // minimum instead; keep confidence based on the normalised curve.
+            const float normalized=difference[size_t(lag)];
+            const float a=rawDifference[size_t(lag-1)], b=rawDifference[size_t(lag)], c=rawDifference[size_t(lag+1)];
             const float denominator=a-2*b+c;
             const float offset=std::abs(denominator)>1.e-9f?std::clamp(0.5f*(a-c)/denominator,-0.5f,0.5f):0;
             const float candidate=rate/(float(lag)+offset);
@@ -56,13 +61,13 @@ private:
             // parabolic interpolation bias. Published values stay in range.
             constexpr float edgeGuard=1.008701984f; // 2^(15/1200)
             if(candidate>=100/edgeGuard && candidate<=1600*edgeGuard) {
-                confidence=1-b; frequency=std::clamp(candidate,100.f,1600.f);
+                confidence=1-normalized; frequency=std::clamp(candidate,100.f,1600.f);
             }
             return;
         }
     }
     std::array<float,512> ring{};
-    std::array<float,201> difference{};
+    std::array<float,201> difference{}, rawDifference{};
     size_t write=0, filled=0;
     int decimation=4, counter=0, hop=0;
     float rate=12000, coefficient=0, low1=0, low2=0;

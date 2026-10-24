@@ -64,4 +64,5 @@ jobs:
           name: Tests-${{ matrix.os }}
           path: |
             build-release/tests.xml
+            build-release/*compact.png
             build-release/Testing/Temporary/
