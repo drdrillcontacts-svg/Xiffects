@@ -1,0 +1,4 @@
+10 portable suites PASS (g++ -std=c++17 -O2 -pthread -ISource).
+DSP, PluginProcessor.cpp and hero.jpg unchanged versus previous delivered revision.
+Both PDFs: 7 pages; text and all text-block bounds checked; all pages rendered. FA pages 2/6 and EN cover visually inspected. Fonts embedded and RTL shaped per line.
+Compiler: g++ (Debian 12.2.0-14+deb12u1) 12.2.0

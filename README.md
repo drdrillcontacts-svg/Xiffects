@@ -1,5 +1,10 @@
 # Xiffects — Unique Sounds by Xivan
 
+## Final UI and bilingual manuals
+
+Production **90b6ecf**: refined hero credit, organised Reverb/Delay headers, restored English About with both Instagram IDs, and separate seven-page [Persian](Manuals/Xiffects-Live-User-Manual-FA.pdf) / [English](Manuals/Xiffects-Live-User-Manual-EN.pdf) PDF manuals. **Desktop run 40146100036 passed 12 suites per OS plus pluginval/auval; iOS/iPadOS and Android builds passed.** DSP and latency are unchanged. [Final downloads, evidence and test limits](docs/final-ui/README.md). Earlier delivery links below are historical.
+
+
 ## Latest insert-quality / UI candidate
 
 Desktop revision **9a1e04a**, production source **b3d49c1**: neutral fresh Live defaults, Clean reset, aligned Live compressor detector, cubic pitch interpolation without a latency/window change, corrected Interface Size text and hero programmer credit. **Desktop run 40144341822 passed 12 suites on each OS plus pluginval/auval**. iOS/iPadOS and Android compile runs also passed (unsigned/debug, not device-tested). See [current evidence and downloads](docs/sax-quality/README.md) and [راهنمای فارسی](docs/sax-quality/DELIVERY.fa.md). Fresh-insert null tests passed on synthetic inputs; this is not real-sax listening certification. Earlier delivery links below are historical.

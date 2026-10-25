@@ -1,0 +1,18 @@
+sr=44100 live_samples=531 live_ms=12.0408 studio_ms=60.0907
+input=100 actual=97.6566 target=97.9988
+input=146.83 actual=146.833 target=146.832
+input=452 actual=440.001 target=440
+input=880 actual=880.12 target=880
+input=1396.91 actual=1397.09 target=1396.91
+sr=48000 live_samples=578 live_ms=12.0417 studio_ms=60.0833
+input=100 actual=97.5796 target=97.9988
+input=146.83 actual=146.832 target=146.832
+input=452 actual=440.007 target=440
+input=880 actual=880.198 target=880
+input=1396.91 actual=1397.93 target=1396.91
+sr=96000 live_samples=1154 live_ms=12.0208 studio_ms=60.0417
+input=100 actual=97.5813 target=97.9988
+input=146.83 actual=146.832 target=146.832
+input=452 actual=440.007 target=440
+input=880 actual=880.199 target=880
+input=1396.91 actual=1397.93 target=1396.91
