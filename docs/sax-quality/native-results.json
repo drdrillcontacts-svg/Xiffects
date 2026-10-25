@@ -1,0 +1,337 @@
+{
+  "tests": [
+    {
+      "path": "downloaded/Tests-windows-latest/tests.xml",
+      "passed": [
+        "Interpolation",
+        "TuneQuality",
+        "TimeEffects",
+        "Scales",
+        "DSP",
+        "Pitch",
+        "Onset",
+        "LivePitch",
+        "CorrectionRegression",
+        "Realtime",
+        "Host",
+        "LiveHost"
+      ]
+    },
+    {
+      "path": "downloaded/Tests-macos-14/tests.xml",
+      "passed": [
+        "Interpolation",
+        "TuneQuality",
+        "TimeEffects",
+        "Scales",
+        "DSP",
+        "Pitch",
+        "Onset",
+        "LivePitch",
+        "CorrectionRegression",
+        "Realtime",
+        "Host",
+        "LiveHost"
+      ]
+    }
+  ],
+  "binaries": [
+    {
+      "path": "windows-package/VST3/Xiffects Live.vst3/Contents/x86_64-win/Xiffects Live.vst3",
+      "bytes": 5567488,
+      "sha256": "57d707eaab3c3e263bc898c085f4bbcadbded81a093e24f3b7d741b18b7a5c0f"
+    }
+  ],
+  "pitch": [
+    {
+      "log": "downloaded/Tests-windows-latest/Testing/Temporary/LastTest.log",
+      "result": "PRODUCT_PITCH Xiffects sr=44100 input=452 strength=50 hz=445.944 cents=-0.0611289"
+    },
+    {
+      "log": "downloaded/Tests-windows-latest/Testing/Temporary/LastTest.log",
+      "result": "PRODUCT_PITCH Xiffects sr=44100 input=452 strength=100 hz=439.987 cents=-0.0492283"
+    },
+    {
+      "log": "downloaded/Tests-windows-latest/Testing/Temporary/LastTest.log",
+      "result": "PRODUCT_PITCH Xiffects sr=44100 input=904 strength=50 hz=891.867 cents=-0.101779"
+    },
+    {
+      "log": "downloaded/Tests-windows-latest/Testing/Temporary/LastTest.log",
+      "result": "PRODUCT_PITCH Xiffects sr=44100 input=904 strength=100 hz=879.87 cents=-0.255491"
+    },
+    {
+      "log": "downloaded/Tests-windows-latest/Testing/Temporary/LastTest.log",
+      "result": "PRODUCT_PITCH Xiffects sr=48000 input=452 strength=50 hz=445.975 cents=0.0586253"
+    },
+    {
+      "log": "downloaded/Tests-windows-latest/Testing/Temporary/LastTest.log",
+      "result": "PRODUCT_PITCH Xiffects sr=48000 input=452 strength=100 hz=440.002 cents=0.00663383"
+    },
+    {
+      "log": "downloaded/Tests-windows-latest/Testing/Temporary/LastTest.log",
+      "result": "PRODUCT_PITCH Xiffects sr=48000 input=904 strength=50 hz=891.795 cents=-0.242052"
+    },
+    {
+      "log": "downloaded/Tests-windows-latest/Testing/Temporary/LastTest.log",
+      "result": "PRODUCT_PITCH Xiffects sr=48000 input=904 strength=100 hz=879.756 cents=-0.479836"
+    },
+    {
+      "log": "downloaded/Tests-windows-latest/Testing/Temporary/LastTest.log",
+      "result": "PRODUCT_PITCH Xiffects sr=96000 input=452 strength=50 hz=445.923 cents=-0.14193"
+    },
+    {
+      "log": "downloaded/Tests-windows-latest/Testing/Temporary/LastTest.log",
+      "result": "PRODUCT_PITCH Xiffects sr=96000 input=452 strength=100 hz=440.046 cents=0.180395"
+    },
+    {
+      "log": "downloaded/Tests-windows-latest/Testing/Temporary/LastTest.log",
+      "result": "PRODUCT_PITCH Xiffects sr=96000 input=904 strength=50 hz=891.845 cents=-0.14464"
+    },
+    {
+      "log": "downloaded/Tests-windows-latest/Testing/Temporary/LastTest.log",
+      "result": "PRODUCT_PITCH Xiffects sr=96000 input=904 strength=100 hz=879.715 cents=-0.560171"
+    },
+    {
+      "log": "downloaded/Tests-windows-latest/Testing/Temporary/LastTest.log",
+      "result": "PRODUCT_PITCH Xiffects Live sr=44100 input=452 strength=50 hz=445.963 cents=0.0121321"
+    },
+    {
+      "log": "downloaded/Tests-windows-latest/Testing/Temporary/LastTest.log",
+      "result": "PRODUCT_PITCH Xiffects Live sr=44100 input=452 strength=100 hz=440.001 cents=0.00205048"
+    },
+    {
+      "log": "downloaded/Tests-windows-latest/Testing/Temporary/LastTest.log",
+      "result": "PRODUCT_PITCH Xiffects Live sr=44100 input=904 strength=50 hz=891.853 cents=-0.128705"
+    },
+    {
+      "log": "downloaded/Tests-windows-latest/Testing/Temporary/LastTest.log",
+      "result": "PRODUCT_PITCH Xiffects Live sr=44100 input=904 strength=100 hz=879.868 cents=-0.258758"
+    },
+    {
+      "log": "downloaded/Tests-windows-latest/Testing/Temporary/LastTest.log",
+      "result": "PRODUCT_PITCH Xiffects Live sr=48000 input=452 strength=50 hz=445.96 cents=0.00111848"
+    },
+    {
+      "log": "downloaded/Tests-windows-latest/Testing/Temporary/LastTest.log",
+      "result": "PRODUCT_PITCH Xiffects Live sr=48000 input=452 strength=100 hz=440.007 cents=0.0257626"
+    },
+    {
+      "log": "downloaded/Tests-windows-latest/Testing/Temporary/LastTest.log",
+      "result": "PRODUCT_PITCH Xiffects Live sr=48000 input=904 strength=50 hz=891.796 cents=-0.239934"
+    },
+    {
+      "log": "downloaded/Tests-windows-latest/Testing/Temporary/LastTest.log",
+      "result": "PRODUCT_PITCH Xiffects Live sr=48000 input=904 strength=100 hz=879.755 cents=-0.481602"
+    },
+    {
+      "log": "downloaded/Tests-windows-latest/Testing/Temporary/LastTest.log",
+      "result": "PRODUCT_PITCH Xiffects Live sr=96000 input=452 strength=50 hz=445.96 cents=0.00111848"
+    },
+    {
+      "log": "downloaded/Tests-windows-latest/Testing/Temporary/LastTest.log",
+      "result": "PRODUCT_PITCH Xiffects Live sr=96000 input=452 strength=100 hz=440.007 cents=0.0259397"
+    },
+    {
+      "log": "downloaded/Tests-windows-latest/Testing/Temporary/LastTest.log",
+      "result": "PRODUCT_PITCH Xiffects Live sr=96000 input=904 strength=50 hz=891.796 cents=-0.239405"
+    },
+    {
+      "log": "downloaded/Tests-windows-latest/Testing/Temporary/LastTest.log",
+      "result": "PRODUCT_PITCH Xiffects Live sr=96000 input=904 strength=100 hz=879.758 cents=-0.476835"
+    },
+    {
+      "log": "downloaded/Tests-macos-14/Testing/Temporary/LastTest.log",
+      "result": "PRODUCT_PITCH Xiffects sr=44100 input=452 strength=50 hz=445.944 cents=-0.0611289"
+    },
+    {
+      "log": "downloaded/Tests-macos-14/Testing/Temporary/LastTest.log",
+      "result": "PRODUCT_PITCH Xiffects sr=44100 input=452 strength=100 hz=439.987 cents=-0.0492283"
+    },
+    {
+      "log": "downloaded/Tests-macos-14/Testing/Temporary/LastTest.log",
+      "result": "PRODUCT_PITCH Xiffects sr=44100 input=904 strength=50 hz=891.867 cents=-0.101779"
+    },
+    {
+      "log": "downloaded/Tests-macos-14/Testing/Temporary/LastTest.log",
+      "result": "PRODUCT_PITCH Xiffects sr=44100 input=904 strength=100 hz=879.87 cents=-0.255491"
+    },
+    {
+      "log": "downloaded/Tests-macos-14/Testing/Temporary/LastTest.log",
+      "result": "PRODUCT_PITCH Xiffects sr=48000 input=452 strength=50 hz=445.975 cents=0.0586253"
+    },
+    {
+      "log": "downloaded/Tests-macos-14/Testing/Temporary/LastTest.log",
+      "result": "PRODUCT_PITCH Xiffects sr=48000 input=452 strength=100 hz=440.002 cents=0.00698807"
+    },
+    {
+      "log": "downloaded/Tests-macos-14/Testing/Temporary/LastTest.log",
+      "result": "PRODUCT_PITCH Xiffects sr=48000 input=904 strength=50 hz=891.795 cents=-0.241875"
+    },
+    {
+      "log": "downloaded/Tests-macos-14/Testing/Temporary/LastTest.log",
+      "result": "PRODUCT_PITCH Xiffects sr=48000 input=904 strength=100 hz=879.756 cents=-0.479836"
+    },
+    {
+      "log": "downloaded/Tests-macos-14/Testing/Temporary/LastTest.log",
+      "result": "PRODUCT_PITCH Xiffects sr=96000 input=452 strength=50 hz=445.923 cents=-0.14193"
+    },
+    {
+      "log": "downloaded/Tests-macos-14/Testing/Temporary/LastTest.log",
+      "result": "PRODUCT_PITCH Xiffects sr=96000 input=452 strength=100 hz=440.046 cents=0.180395"
+    },
+    {
+      "log": "downloaded/Tests-macos-14/Testing/Temporary/LastTest.log",
+      "result": "PRODUCT_PITCH Xiffects sr=96000 input=904 strength=50 hz=891.845 cents=-0.144817"
+    },
+    {
+      "log": "downloaded/Tests-macos-14/Testing/Temporary/LastTest.log",
+      "result": "PRODUCT_PITCH Xiffects sr=96000 input=904 strength=100 hz=879.715 cents=-0.559818"
+    },
+    {
+      "log": "downloaded/Tests-macos-14/Testing/Temporary/LastTest.log",
+      "result": "PRODUCT_PITCH Xiffects Live sr=44100 input=452 strength=50 hz=445.963 cents=0.0121321"
+    },
+    {
+      "log": "downloaded/Tests-macos-14/Testing/Temporary/LastTest.log",
+      "result": "PRODUCT_PITCH Xiffects Live sr=44100 input=452 strength=100 hz=440.001 cents=0.00205048"
+    },
+    {
+      "log": "downloaded/Tests-macos-14/Testing/Temporary/LastTest.log",
+      "result": "PRODUCT_PITCH Xiffects Live sr=44100 input=904 strength=50 hz=891.853 cents=-0.128705"
+    },
+    {
+      "log": "downloaded/Tests-macos-14/Testing/Temporary/LastTest.log",
+      "result": "PRODUCT_PITCH Xiffects Live sr=44100 input=904 strength=100 hz=879.868 cents=-0.258758"
+    },
+    {
+      "log": "downloaded/Tests-macos-14/Testing/Temporary/LastTest.log",
+      "result": "PRODUCT_PITCH Xiffects Live sr=48000 input=452 strength=50 hz=445.96 cents=0.00111848"
+    },
+    {
+      "log": "downloaded/Tests-macos-14/Testing/Temporary/LastTest.log",
+      "result": "PRODUCT_PITCH Xiffects Live sr=48000 input=452 strength=100 hz=440.007 cents=0.0257626"
+    },
+    {
+      "log": "downloaded/Tests-macos-14/Testing/Temporary/LastTest.log",
+      "result": "PRODUCT_PITCH Xiffects Live sr=48000 input=904 strength=50 hz=891.796 cents=-0.239934"
+    },
+    {
+      "log": "downloaded/Tests-macos-14/Testing/Temporary/LastTest.log",
+      "result": "PRODUCT_PITCH Xiffects Live sr=48000 input=904 strength=100 hz=879.755 cents=-0.481602"
+    },
+    {
+      "log": "downloaded/Tests-macos-14/Testing/Temporary/LastTest.log",
+      "result": "PRODUCT_PITCH Xiffects Live sr=96000 input=452 strength=50 hz=445.96 cents=0.00111848"
+    },
+    {
+      "log": "downloaded/Tests-macos-14/Testing/Temporary/LastTest.log",
+      "result": "PRODUCT_PITCH Xiffects Live sr=96000 input=452 strength=100 hz=440.007 cents=0.0259397"
+    },
+    {
+      "log": "downloaded/Tests-macos-14/Testing/Temporary/LastTest.log",
+      "result": "PRODUCT_PITCH Xiffects Live sr=96000 input=904 strength=50 hz=891.796 cents=-0.239581"
+    },
+    {
+      "log": "downloaded/Tests-macos-14/Testing/Temporary/LastTest.log",
+      "result": "PRODUCT_PITCH Xiffects Live sr=96000 input=904 strength=100 hz=879.758 cents=-0.476835"
+    }
+  ],
+  "insert": [
+    {
+      "log": "downloaded/Tests-windows-latest/Testing/Temporary/LastTest.log",
+      "result": "INSERT_QUALITY sr=44100 channels=1 compressor=0 delay=531 max_error=0"
+    },
+    {
+      "log": "downloaded/Tests-windows-latest/Testing/Temporary/LastTest.log",
+      "result": "INSERT_QUALITY sr=44100 channels=1 compressor=1 delay=531 max_error=0"
+    },
+    {
+      "log": "downloaded/Tests-windows-latest/Testing/Temporary/LastTest.log",
+      "result": "INSERT_QUALITY sr=44100 channels=2 compressor=0 delay=531 max_error=0"
+    },
+    {
+      "log": "downloaded/Tests-windows-latest/Testing/Temporary/LastTest.log",
+      "result": "INSERT_QUALITY sr=44100 channels=2 compressor=1 delay=531 max_error=0"
+    },
+    {
+      "log": "downloaded/Tests-windows-latest/Testing/Temporary/LastTest.log",
+      "result": "INSERT_QUALITY sr=48000 channels=1 compressor=0 delay=578 max_error=0"
+    },
+    {
+      "log": "downloaded/Tests-windows-latest/Testing/Temporary/LastTest.log",
+      "result": "INSERT_QUALITY sr=48000 channels=1 compressor=1 delay=578 max_error=0"
+    },
+    {
+      "log": "downloaded/Tests-windows-latest/Testing/Temporary/LastTest.log",
+      "result": "INSERT_QUALITY sr=48000 channels=2 compressor=0 delay=578 max_error=0"
+    },
+    {
+      "log": "downloaded/Tests-windows-latest/Testing/Temporary/LastTest.log",
+      "result": "INSERT_QUALITY sr=48000 channels=2 compressor=1 delay=578 max_error=0"
+    },
+    {
+      "log": "downloaded/Tests-windows-latest/Testing/Temporary/LastTest.log",
+      "result": "INSERT_QUALITY sr=96000 channels=1 compressor=0 delay=1154 max_error=0"
+    },
+    {
+      "log": "downloaded/Tests-windows-latest/Testing/Temporary/LastTest.log",
+      "result": "INSERT_QUALITY sr=96000 channels=1 compressor=1 delay=1154 max_error=0"
+    },
+    {
+      "log": "downloaded/Tests-windows-latest/Testing/Temporary/LastTest.log",
+      "result": "INSERT_QUALITY sr=96000 channels=2 compressor=0 delay=1154 max_error=0"
+    },
+    {
+      "log": "downloaded/Tests-windows-latest/Testing/Temporary/LastTest.log",
+      "result": "INSERT_QUALITY sr=96000 channels=2 compressor=1 delay=1154 max_error=0"
+    },
+    {
+      "log": "downloaded/Tests-macos-14/Testing/Temporary/LastTest.log",
+      "result": "INSERT_QUALITY sr=44100 channels=1 compressor=0 delay=531 max_error=0"
+    },
+    {
+      "log": "downloaded/Tests-macos-14/Testing/Temporary/LastTest.log",
+      "result": "INSERT_QUALITY sr=44100 channels=1 compressor=1 delay=531 max_error=1.4866e-08"
+    },
+    {
+      "log": "downloaded/Tests-macos-14/Testing/Temporary/LastTest.log",
+      "result": "INSERT_QUALITY sr=44100 channels=2 compressor=0 delay=531 max_error=0"
+    },
+    {
+      "log": "downloaded/Tests-macos-14/Testing/Temporary/LastTest.log",
+      "result": "INSERT_QUALITY sr=44100 channels=2 compressor=1 delay=531 max_error=1.48636e-08"
+    },
+    {
+      "log": "downloaded/Tests-macos-14/Testing/Temporary/LastTest.log",
+      "result": "INSERT_QUALITY sr=48000 channels=1 compressor=0 delay=578 max_error=0"
+    },
+    {
+      "log": "downloaded/Tests-macos-14/Testing/Temporary/LastTest.log",
+      "result": "INSERT_QUALITY sr=48000 channels=1 compressor=1 delay=578 max_error=1.48982e-08"
+    },
+    {
+      "log": "downloaded/Tests-macos-14/Testing/Temporary/LastTest.log",
+      "result": "INSERT_QUALITY sr=48000 channels=2 compressor=0 delay=578 max_error=0"
+    },
+    {
+      "log": "downloaded/Tests-macos-14/Testing/Temporary/LastTest.log",
+      "result": "INSERT_QUALITY sr=48000 channels=2 compressor=1 delay=578 max_error=1.48904e-08"
+    },
+    {
+      "log": "downloaded/Tests-macos-14/Testing/Temporary/LastTest.log",
+      "result": "INSERT_QUALITY sr=96000 channels=1 compressor=0 delay=1154 max_error=0"
+    },
+    {
+      "log": "downloaded/Tests-macos-14/Testing/Temporary/LastTest.log",
+      "result": "INSERT_QUALITY sr=96000 channels=1 compressor=1 delay=1154 max_error=1.48856e-08"
+    },
+    {
+      "log": "downloaded/Tests-macos-14/Testing/Temporary/LastTest.log",
+      "result": "INSERT_QUALITY sr=96000 channels=2 compressor=0 delay=1154 max_error=0"
+    },
+    {
+      "log": "downloaded/Tests-macos-14/Testing/Temporary/LastTest.log",
+      "result": "INSERT_QUALITY sr=96000 channels=2 compressor=1 delay=1154 max_error=1.48933e-08"
+    }
+  ]
+}

@@ -1,5 +1,10 @@
 # Xiffects — Unique Sounds by Xivan
 
+## Latest insert-quality / UI candidate
+
+Desktop revision **9a1e04a**, production source **b3d49c1**: neutral fresh Live defaults, Clean reset, aligned Live compressor detector, cubic pitch interpolation without a latency/window change, corrected Interface Size text and hero programmer credit. **Desktop run 40144341822 passed 12 suites on each OS plus pluginval/auval**. iOS/iPadOS and Android compile runs also passed (unsigned/debug, not device-tested). See [current evidence and downloads](docs/sax-quality/README.md) and [راهنمای فارسی](docs/sax-quality/DELIVERY.fa.md). Fresh-insert null tests passed on synthetic inputs; this is not real-sax listening certification. Earlier delivery links below are historical.
+
+
 Native C++17 / JUCE 8.0.6 soprano saxophone multi-effect, VST3 and Standalone.
 This is a working implementation in development, **not an acoustically validated
 commercial release**. No web view or full-interface screenshot is used as UI.
