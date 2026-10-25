@@ -1,4 +1,5 @@
 #include "PluginEditor.h"
+#include "UI/ProductInfo.h"
 #include <BinaryData.h>
 
 namespace
@@ -45,8 +46,8 @@ XiffectsAudioProcessorEditor::XiffectsAudioProcessorEditor (XiffectsAudioProcess
     brand.setJustificationType (juce::Justification::centredLeft);
     addAndMakeVisible (brand);
     programmerCredit.setText ("Programmer Daniyal Azimi", juce::dontSendNotification);
-    programmerCredit.setFont (juce::Font (15.0f));
-    programmerCredit.setColour (juce::Label::textColourId, soft);
+    programmerCredit.setFont (juce::Font (11.0f).withExtraKerningFactor(0.45f));
+    programmerCredit.setColour (juce::Label::textColourId, juce::Colour(0xffa6a6a6));
     programmerCredit.setJustificationType(juce::Justification::centred);
     addAndMakeVisible (programmerCredit);
     saxLabel.setText ("SOPRANO SAXOPHONE  /  MULTI-EFFECT", juce::dontSendNotification);
@@ -67,6 +68,9 @@ XiffectsAudioProcessorEditor::XiffectsAudioProcessorEditor (XiffectsAudioProcess
     nextPreset.setTooltip("Next factory preset (wraps at last)");
     previousPreset.onClick=[this]{stepPreset(-1);};nextPreset.onClick=[this]{stepPreset(1);};
     addAndMakeVisible(previousPreset);addAndMakeVisible(nextPreset);
+    syncButton.setComponentID("delay-sync");divisionBox.setComponentID("delay-division");
+    reverbBox.setComponentID("reverb-mode");tempoLabel.setComponentID("delay-tempo");
+    programmerCredit.setComponentID("programmer-credit");
     syncButton.setClickingTogglesState(true);addAndMakeVisible(syncButton);
     syncButton.setTooltip("Host tempo sync; 120 BPM if the host supplies no tempo. Tempo range 30-300 BPM.");
     syncAttachment=std::make_unique<XiffectsAudioProcessor::APVTS::ButtonAttachment>(processor.parameters,"DLY_SYNC",syncButton);
@@ -229,7 +233,13 @@ void XiffectsAudioProcessorEditor::paint (juce::Graphics& g)
         g.setColour(juce::Colour(0xff45464b)); g.drawRoundedRectangle(rect,5,1);
         g.setColour(red);
         const float cx=rect.getCentreX();
-        for(int j=0;j<5;++j) g.drawVerticalLine(int(cx)+j*5-10,420.0f+float(std::abs(j-2)*4),446.0f-float(std::abs(j-2)*4));
+        if(i!=2 && i!=3) for(int j=0;j<5;++j) g.drawVerticalLine(int(cx)+j*5-10,420.0f+float(std::abs(j-2)*4),446.0f-float(std::abs(j-2)*4));
+    }
+    // Dedicated time-effect headers: no decorative waveform underneath controls.
+    for(int index:{2,3}) {
+        const juce::Rectangle<float> header(float(22+index*(1396/9)+4),408,119,42);
+        g.setColour(juce::Colour(0xff101115));g.fillRoundedRectangle(header,4);
+        g.setColour(juce::Colour(0xff34363c));g.drawRoundedRectangle(header,4,1);
     }
     g.setColour(panel); g.fillRoundedRectangle(22,736,1396,144,10);
     g.setColour(juce::Colour(0xff45464b));g.drawRoundedRectangle(22,736,1396,144,10,1);
@@ -305,10 +315,11 @@ void XiffectsAudioProcessorEditor::resized()
             }
         }
     }
-    reverbBox.setBounds(22+2*moduleW+6,410,moduleW-38,30);
-    syncButton.setBounds(22+3*moduleW+4,410,48,28);
-    divisionBox.setBounds(22+3*moduleW+56,410,moduleW-84,28);
-    tempoLabel.setBounds(22+3*moduleW+4,434,moduleW-8,18);
+    reverbBox.setBounds(22+2*moduleW+7,415,113,28);
+    syncButton.setBounds(22+3*moduleW+7,411,43,23);
+    divisionBox.setBounds(22+3*moduleW+53,411,67,23);
+    tempoLabel.setBounds(22+3*moduleW+7,435,113,13);
+    tempoLabel.setFont(juce::Font(10.5f));
     tuneTitle.setBounds(42,749,250,25);
     keyLabel.setBounds(42,789,50,18); scaleLabel.setBounds(150,789,70,18);
     keyBox.setBounds(42,811,90,28); scaleBox.setBounds(150,811,135,28);
@@ -403,9 +414,15 @@ void XiffectsAudioProcessorEditor::showSettings() {
     menu.addSectionHeader("INTERFACE SIZE");
     menu.addItem(1,"80% - compact");menu.addItem(2,"100% - standard");menu.addItem(3,"120% - large");
 
+    menu.addSeparator();menu.addItem(10,"About Xiffects Live");
     const juce::Component::SafePointer<XiffectsAudioProcessorEditor> safe(this);
     menu.showMenuAsync(juce::PopupMenu::Options().withTargetComponent(&settingsButton),[safe](int choice) {
         if(safe==nullptr) return;
+        if(choice==10) {
+            juce::NativeMessageBox::showMessageBoxAsync(juce::MessageBoxIconType::InfoIcon,
+                "About Xiffects Live",xiffects::aboutText,safe.getComponent());
+            return;
+        }
         if(choice>=1 && choice<=3) {
             const float scale=0.6f+0.2f*float(choice);
             safe->setSize(int(1440*scale),int(900*scale));
