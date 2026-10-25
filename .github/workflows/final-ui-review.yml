@@ -1,0 +1,52 @@
+name: Review final UI native output
+on:
+  push:
+    paths: ['.github/workflows/final-ui-review.yml', 'Tools/ReviewInsertQuality.py']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          run-id: 40146100036
+          pattern: Tests-*
+          path: downloaded
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/download-artifact@v4
+        with:
+          run-id: 40146100036
+          name: Xiffects-Live-Windows-x64-50-presets
+          path: windows-package
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Check complete tests and create a native screenshot preview
+        run: |
+          python -m pip install Pillow==11.3.0
+          python Tools/ReviewInsertQuality.py
+      - name: Publish native preview first half
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          s=Path('preview.base64').read_text()
+          for i in range(10):
+              part=s[i*3500:(i+1)*3500]
+              if part:print('::notice title=UIChunk'+str(i)+'::'+part)
+          PY
+      - name: Publish native preview second half
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          s=Path('preview.base64').read_text()
+          for i in range(10,20):
+              part=s[i*3500:(i+1)*3500]
+              if part:print('::notice title=UIChunk'+str(i)+'::'+part)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Final-UI-native-review
+          path: |
+            review.json
+            compact-preview.jpg
