@@ -20,7 +20,7 @@ result={'tests':reports,'pitch':pitch,'insert':insert,'binaries':binaries,'metho
 Path('review.json').write_text(json.dumps(result,indent=2))
 for key in ['tests','binaries']:print('::notice title='+key+'::'+json.dumps(result[key],separators=(',',':')))
 for key in ['pitch','insert']:
-    for i in range(0,len(result[key]),8):print('::notice title='+key+str(i//8)+'::'+json.dumps(result[key][i:i+8],separators=(',',':')))
+    for i in range(0,len(result[key]),12):print('::notice title='+key+str(i//12)+'::'+json.dumps(result[key][i:i+12],separators=(',',':')))
 image=Image.open(next((root/'Tests-windows-latest').rglob('Xiffects-Live-compact.png'))).convert('RGB')
 for quality in [80,70,60,50,40,30]:
     b=io.BytesIO();image.save(b,format='JPEG',quality=quality,optimize=True)
